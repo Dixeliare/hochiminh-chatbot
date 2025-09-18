@@ -430,9 +430,9 @@ Dự án này được phát hành dưới [MIT License](LICENSE).
 
 ## 👨‍💻 Tác giả
 
-- **Developer**: Tên của bạn
-- **Email**: email@example.com
-- **GitHub**: [@username](https://github.com/username)
+- **Developer**: Đào Xuân Long
+- **Email**: daoxuanlong492004@gmail.com
+- **GitHub**: Dixeliare
 
 ## 🙏 Acknowledgments
 
