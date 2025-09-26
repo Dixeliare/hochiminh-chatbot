@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using Repositories.Models;
 
-namespace Repositories.Data;
+namespace Data;
 
 public partial class AppDbContext : DbContext
 {

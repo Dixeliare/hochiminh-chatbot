@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Repositories.Models;
+namespace Data;
 
 public partial class daily_stat
 {
