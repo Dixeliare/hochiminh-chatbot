@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using System.Text.Json;
 using Data;
 using Models.DTOs;
 using Services.Interfaces;
@@ -111,7 +112,7 @@ public class MessagesController : BaseController
                 conversation_id = request.ConversationId,
                 content = request.Content,
                 role = request.Role,
-                sources = request.Sources,
+                sources = request.Sources != null ? JsonSerializer.Serialize(request.Sources) : null,
                 confidence_score = request.ConfidenceScore
             };
 

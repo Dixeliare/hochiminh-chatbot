@@ -1,287 +1,213 @@
-# 🇻🇳 HCM Chatbot - Tư Tưởng Hồ Chí Minh
+# 🇻🇳 HCM Chatbot - Hệ thống Chat AI Hoàn chỉnh
 
-> Chatbot AI thông minh về tư tưởng và di sản của Chủ tịch Hồ Chí Minh
+> Nền tảng ChatGPT về tư tưởng Hồ Chí Minh với Authentication, Database và Admin Dashboard
 
 ![Vietnam Flag](https://img.shields.io/badge/🇻🇳-Vietnam-red?style=for-the-badge)
-![Python](https://img.shields.io/badge/Python-3.8+-blue?style=for-the-badge&logo=python)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-green?style=for-the-badge&logo=fastapi)
+![.NET](https://img.shields.io/badge/.NET-8.0-blue?style=for-the-badge&logo=dotnet)
+![Python](https://img.shields.io/badge/Python-3.8+-green?style=for-the-badge&logo=python)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16+-blue?style=for-the-badge&logo=postgresql)
 ![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-yellow?style=for-the-badge&logo=javascript)
 
 ## 📖 Mô tả dự án
 
-HCM Chatbot là một ứng dụng AI tiên tiến được xây dựng để trao đổi và học hỏi về tư tưởng của Chủ tịch Hồ Chí Minh. Dự án sử dụng công nghệ RAG (Retrieval-Augmented Generation) kết hợp với Gemini AI để cung cấp câu trả lời chính xác và có nguồn gốc.
+HCM Chatbot là hệ thống chat AI hoàn chỉnh như ChatGPT, được thiết kế riêng để trao đổi về tư tưởng Chủ tịch Hồ Chí Minh. Hệ thống tích hợp 3 thành phần chính: .NET Web API, Python AI Backend và Frontend hiện đại với đầy đủ tính năng authentication, lưu trữ lịch sử chat và admin dashboard.
 
-### ✨ Tính năng chính
+### ✨ Tính năng hoàn chỉnh
 
-- 🤖 **AI Chat thông minh** với RAG system
-- 📚 **Knowledge Base** về tư tưởng Hồ Chí Minh
-- 🔍 **Source Citation** cho mọi câu trả lời
-- 📱 **Responsive Design** trên mọi thiết bị
-- 🎨 **UI/UX hiện đại** với theme cờ Việt Nam
+- 🔐 **Authentication System** với JWT và .NET Identity
+- 💬 **ChatGPT-like Interface** với lịch sử cuộc trò chuyện
+- 🤖 **AI RAG System** tích hợp Gemini AI
+- 💾 **PostgreSQL Database** lưu trữ toàn bộ dữ liệu
+- 👤 **User Management** và Admin Dashboard
+- 📱 **Responsive Design** hỗ trợ mobile/desktop
 - ⚡ **Real-time Chat** với typing indicators
-- 📊 **Confidence Score** cho độ tin cậy
-- 🔄 **Auto Health Check** cho backend
+- 📊 **Confidence Score** và source citation
+- 🔄 **Conversation Management** tạo/xóa cuộc trò chuyện
+- 🛡️ **Security** với CORS, authentication middleware
 
 ## 🏗️ Kiến trúc hệ thống
 
 ```
+Frontend (port 3000) ←→ .NET API (port 5000) ←→ Python AI (port 8000)
+                              ↓
+                         PostgreSQL Database
+```
+
+### 📁 Cấu trúc thư mục
+
+```
 hcm-chatbot/
-├── backend/                 # FastAPI Backend
+├── frontend/                    # Frontend Web Application
+│   ├── welcome.html            # Trang chủ hệ thống
+│   ├── auth.html              # Đăng ký/đăng nhập
+│   ├── chat.html              # Giao diện chat chính
+│   ├── chat.js                # JavaScript chat functionality
+│   └── styles/                # CSS styling
+├── dotnet-api/                 # .NET 8 Web API
+│   └── hcm-chatbot-api/
+│       ├── Web_API/           # API Controllers
+│       │   ├── Controllers/   # Auth, Chat, Users, Dashboard
+│       │   ├── Program.cs     # API configuration
+│       │   └── Web_API.csproj
+│       ├── Models/            # Database models & DTOs
+│       ├── Services/          # Business logic services
+│       ├── Repositories/      # Data access layer
+│       └── Data/             # Database context
+├── backend/                   # Python AI Backend
 │   ├── app/
-│   │   ├── main.py         # API endpoints
-│   │   └── services/       # Business logic
-│   │       ├── enhanced_rag_service.py
-│   │       ├── vector_store.py
-│   │       └── web_data_collector.py
-│   ├── requirements.txt    # Python dependencies
-│   ├── .env.example       # Environment template
-│   └── venv/              # Virtual environment
-├── frontend/               # Modern Web UI
-│   ├── index.html         # Main interface
-│   ├── styles.css         # Modern styling
-│   ├── script.js          # Chat functionality
-│   └── README.md          # Frontend docs
-├── data/                  # Data storage
-├── scripts/               # Automation scripts
-└── README.md              # This file
+│   │   ├── main.py           # FastAPI application
+│   │   └── services/
+│   │       ├── enhanced_rag_service.py  # RAG AI system
+│   │       └── vector_store.py          # Vector database
+│   ├── requirements.txt      # Python dependencies
+│   └── venv/                # Virtual environment
+├── start-all.sh             # 🚀 Khởi động toàn bộ hệ thống
+├── stop-all.sh              # 🛑 Dừng toàn bộ hệ thống
+├── status.sh                # 📊 Kiểm tra trạng thái
+├── SETUP_GUIDE.md           # Hướng dẫn chi tiết
+└── README.md                # File này
 ```
 
-## 🚀 Cài đặt nhanh
+## 🚀 Cài đặt và chạy hệ thống
 
-### Yêu cầu hệ thống
+### ⚡ Khởi động nhanh
 
+**Chỉ cần 1 lệnh để chạy toàn bộ hệ thống:**
+
+```bash
+./start-all.sh
+```
+
+**Dừng hệ thống:**
+
+```bash
+./stop-all.sh
+```
+
+**Kiểm tra trạng thái:**
+
+```bash
+./status.sh
+```
+
+### 📋 Yêu cầu hệ thống
+
+- **PostgreSQL** 16+ (phải chạy trước)
+- **.NET** 8.0+
 - **Python** 3.8+
-- **Node.js** (tùy chọn, cho live server)
 - **Git**
-- **API Keys**: Gemini AI, Pinecone
+- **API Keys**: Gemini AI (cho Python AI backend)
 
-### 1️⃣ Clone dự án
+### 🗄️ Cài đặt PostgreSQL
 
 ```bash
-git clone https://github.com/username/hcm-chatbot.git
+# macOS (với Homebrew)
+brew install postgresql@16
+brew services start postgresql
+
+# Ubuntu/Debian
+sudo apt-get install postgresql-16
+
+# Windows
+# Download từ https://www.postgresql.org/download/
+```
+
+### 1️⃣ Clone và Setup
+
+```bash
+git clone <repository-url>
 cd hcm-chatbot
+
+# Cấp quyền thực thi cho scripts
+chmod +x *.sh
 ```
 
-### 2️⃣ Cài đặt Backend
+### 2️⃣ Cấu hình Backend AI (tùy chọn)
+
+Nếu muốn sử dụng AI, cần setup Gemini API:
 
 ```bash
-# Tạo virtual environment
+# Tạo file .env trong backend/
 cd backend
-python -m venv venv
-
-# Kích hoạt virtual environment
-# Trên macOS/Linux:
-source venv/bin/activate
-# Trên Windows:
-# venv\Scripts\activate
-
-# Cài đặt dependencies
-pip install -r requirements.txt
-
-# Cấu hình environment
 cp .env.example .env
-# Chỉnh sửa .env với API keys của bạn
+
+# Thêm Gemini API key vào .env
+echo "GEMINI_API_KEY=your_api_key_here" >> .env
 ```
 
-### 3️⃣ Cấu hình API Keys
+**Lấy Gemini API Key tại:** https://ai.google.dev/
 
-Mở file `.env` và thêm API keys:
+## 🌐 Truy cập hệ thống
 
-```env
-GEMINI_API_KEY=your_gemini_api_key_here
-PINECONE_API_KEY=your_pinecone_api_key_here
-```
+Sau khi chạy `./start-all.sh`, truy cập:
 
-**Cách lấy API Keys:**
-- **Gemini AI**: https://ai.google.dev/
-- **Pinecone**: https://www.pinecone.io/
+- **🌐 Frontend**: http://localhost:3000/welcome.html
+- **🔗 .NET API**: http://localhost:5000/swagger
+- **🤖 Python AI**: http://localhost:8000/docs
+- **💾 Health Check**: http://localhost:5000/health
 
-## 🎮 Cách sử dụng
+## 👤 Tài khoản mặc định
 
-### Chạy bằng Scripts tự động
+### Admin Account
+- **Username**: `admin`
+- **Password**: `admin123`
+- **Role**: Admin với full quyền
 
-Chúng tôi đã tạo các script tiện lợi để bạn dễ dàng sử dụng:
-
-```bash
-# Khởi động toàn bộ hệ thống
-./scripts/start.sh
-
-# Chỉ chạy backend
-./scripts/start-backend.sh
-
-# Chỉ chạy frontend
-./scripts/start-frontend.sh
-
-# Dừng hệ thống
-./scripts/stop.sh
-```
-
-### Chạy thủ công
-
-#### Backend (Terminal 1)
-
-```bash
-cd backend
-source venv/bin/activate
-python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
-```
-
-#### Frontend (Terminal 2)
-
-```bash
-cd frontend
-
-# Cách 1: Mở trực tiếp trong browser
-open index.html
-
-# Cách 2: Sử dụng Python HTTP Server
-python -m http.server 3000
-
-# Cách 3: Sử dụng Live Server (VS Code extension)
-# Right-click index.html -> "Open with Live Server"
-```
-
-### 🌐 Truy cập ứng dụng
-
-- **Frontend**: http://localhost:3000
-- **Backend API**: http://localhost:8000
-- **API Docs**: http://localhost:8000/docs
-- **Health Check**: http://localhost:8000/health
+> Tài khoản admin được tự động tạo khi khởi động .NET API lần đầu
 
 ## 📱 Hướng dẫn sử dụng
 
-### 💬 Chat với Bot
+### 1. Truy cập trang chủ
+Mở: http://localhost:3000/welcome.html
 
-1. **Mở giao diện** tại http://localhost:3000
-2. **Chờ kết nối** - status sẽ hiện "Đã kết nối" màu xanh
-3. **Nhập câu hỏi** về tư tưởng Hồ Chí Minh
-4. **Xem kết quả** với sources và confidence score
+### 2. Đăng ký tài khoản
+- Click "Đăng ký"
+- Điền: username, email, fullname, password
+- Click "Đăng ký"
+
+### 3. Đăng nhập
+- Chuyển tab "Đăng nhập"
+- Nhập username/password
+- Click "Đăng nhập"
+
+### 4. Sử dụng Chat
+- **Sidebar**: Danh sách cuộc trò chuyện, tạo chat mới
+- **Main Area**: Khu vực chat chính
+- **Input Area**: Nhập tin nhắn
+
+### 5. Tính năng Chat
+- **Tạo cuộc trò chuyện mới**: Click "Cuộc trò chuyện mới"
+- **Gửi tin nhắn**: Nhập câu hỏi về tư tưởng Hồ Chí Minh
+- **Xem lịch sử**: Click vào cuộc trò chuyện trong sidebar
+- **Xóa cuộc trò chuyện**: Click icon thùng rác
 
 ### 🎯 Gợi ý câu hỏi
-
-Thử các câu hỏi mẫu:
-
 - "Tư tưởng Hồ Chí Minh về độc lập dân tộc là gì?"
 - "Quan điểm của Bác Hồ về đạo đức cách mạng?"
 - "Tư tưởng Hồ Chí Minh về giáo dục và văn hóa?"
-- "Tầm nhìn của Bác Hồ về một Việt Nam thống nhất?"
 
-### 🔍 Hiểu kết quả
+## 🔧 API Endpoints
 
-Mỗi câu trả lời bao gồm:
-- **Answer**: Nội dung trả lời chính
-- **Sources**: Nguồn tham khảo từ knowledge base
-- **Confidence**: Độ tin cậy từ 0-100%
-- **Last Updated**: Thời gian cập nhật dữ liệu
+### Authentication
+- `POST /api/auth/register` - Đăng ký
+- `POST /api/auth/login` - Đăng nhập
+- `GET /api/auth/me` - Thông tin user hiện tại
 
-## 🛠️ Scripts tự động
+### Chat
+- `POST /api/chat/send` - Gửi tin nhắn
+- `GET /api/chat/conversations` - Lấy danh sách cuộc trò chuyện
+- `GET /api/chat/conversations/{id}/messages` - Lấy tin nhắn
+- `DELETE /api/chat/conversations/{id}` - Xóa cuộc trò chuyện
 
-### `/scripts/start.sh` - Khởi động hệ thống
+### Health Check
+- `GET /health` - Kiểm tra trạng thái hệ thống
 
-```bash
-#!/bin/bash
-echo "🚀 Starting HCM Chatbot System..."
+## 🔄 Workflow hoạt động
 
-# Check if backend directory exists
-if [ ! -d "backend" ]; then
-    echo "❌ Backend directory not found!"
-    exit 1
-fi
-
-# Start backend
-echo "📡 Starting backend server..."
-cd backend
-
-# Check if virtual environment exists
-if [ ! -d "venv" ]; then
-    echo "🔧 Creating virtual environment..."
-    python -m venv venv
-    source venv/bin/activate
-    pip install -r requirements.txt
-else
-    source venv/bin/activate
-fi
-
-# Check if .env exists
-if [ ! -f ".env" ]; then
-    echo "⚠️  .env file not found! Copying from .env.example..."
-    cp .env.example .env
-    echo "📝 Please edit .env file with your API keys"
-    read -p "Press Enter after editing .env file..."
-fi
-
-# Start backend in background
-nohup python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload > ../logs/backend.log 2>&1 &
-BACKEND_PID=$!
-echo $BACKEND_PID > ../logs/backend.pid
-
-echo "✅ Backend started (PID: $BACKEND_PID)"
-echo "📊 Backend API: http://localhost:8000"
-echo "📚 API Docs: http://localhost:8000/docs"
-
-# Wait for backend to start
-sleep 5
-
-# Start frontend
-cd ../frontend
-echo "🎨 Starting frontend server..."
-
-# Check if Python HTTP server is available
-if command -v python3 &> /dev/null; then
-    nohup python3 -m http.server 3000 > ../logs/frontend.log 2>&1 &
-    FRONTEND_PID=$!
-    echo $FRONTEND_PID > ../logs/frontend.pid
-    echo "✅ Frontend started (PID: $FRONTEND_PID)"
-    echo "🌐 Frontend: http://localhost:3000"
-else
-    echo "⚠️  Python not found. Please open frontend/index.html manually"
-fi
-
-echo ""
-echo "🎉 HCM Chatbot is ready!"
-echo "🌐 Open: http://localhost:3000"
-echo "🛑 To stop: ./scripts/stop.sh"
-```
-
-### `/scripts/stop.sh` - Dừng hệ thống
-
-```bash
-#!/bin/bash
-echo "🛑 Stopping HCM Chatbot System..."
-
-# Create logs directory if it doesn't exist
-mkdir -p logs
-
-# Stop backend
-if [ -f "logs/backend.pid" ]; then
-    BACKEND_PID=$(cat logs/backend.pid)
-    if ps -p $BACKEND_PID > /dev/null; then
-        kill $BACKEND_PID
-        echo "✅ Backend stopped (PID: $BACKEND_PID)"
-    else
-        echo "⚠️  Backend process not found"
-    fi
-    rm -f logs/backend.pid
-fi
-
-# Stop frontend
-if [ -f "logs/frontend.pid" ]; then
-    FRONTEND_PID=$(cat logs/frontend.pid)
-    if ps -p $FRONTEND_PID > /dev/null; then
-        kill $FRONTEND_PID
-        echo "✅ Frontend stopped (PID: $FRONTEND_PID)"
-    else
-        echo "⚠️  Frontend process not found"
-    fi
-    rm -f logs/frontend.pid
-fi
-
-# Kill any remaining uvicorn processes
-pkill -f "uvicorn app.main:app" 2>/dev/null
-pkill -f "python.*http.server.*3000" 2>/dev/null
-
-echo "🏁 All services stopped!"
-```
+1. **User đăng nhập** → Frontend → .NET API → JWT Token
+2. **User gửi chat** → Frontend → .NET API → Python AI → Response
+3. **Lưu tin nhắn** → .NET API → PostgreSQL Database
+4. **Load lịch sử** → Frontend → .NET API → Database
 
 ## 🧪 Testing & Development
 
@@ -289,165 +215,139 @@ echo "🏁 All services stopped!"
 
 ```bash
 # Health check
+curl http://localhost:5000/health
 curl http://localhost:8000/health
 
-# Test chat endpoint
-curl -X POST "http://localhost:8000/chat" \
+# Test auth
+curl -X POST "http://localhost:5000/api/auth/login" \
      -H "Content-Type: application/json" \
-     -d '{"question": "Tư tưởng Hồ Chí Minh về độc lập dân tộc là gì?"}'
+     -d '{"username": "admin", "password": "admin123"}'
 ```
 
 ### Development Mode
 
 ```bash
-# Backend với auto-reload
+# .NET API với hot reload
+cd dotnet-api/hcm-chatbot-api
+dotnet watch --project Web_API/Web_API.csproj
+
+# Python AI với auto-reload
 cd backend
 source venv/bin/activate
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 
-# Frontend với live reload (VS Code)
-# Install Live Server extension
-# Right-click frontend/index.html -> "Open with Live Server"
+# Frontend với live server
+cd frontend
+python3 -m http.server 3000
 ```
 
 ## 🔧 Troubleshooting
 
 ### Lỗi thường gặp
 
-#### 1. Backend không khởi động
-
+#### 1. PostgreSQL không chạy
 ```bash
-# Kiểm tra Python version
-python --version  # Cần >= 3.8
+# Kiểm tra PostgreSQL
+pg_isready -h localhost -p 5432
 
+# Khởi động PostgreSQL
+brew services start postgresql  # macOS
+sudo systemctl start postgresql  # Linux
+```
+
+#### 2. .NET API lỗi build
+```bash
+# Build lại project
+cd dotnet-api/hcm-chatbot-api
+dotnet build Web_API/Web_API.csproj
+
+# Restore packages
+dotnet restore
+```
+
+#### 3. Python AI không khởi động
+```bash
 # Kiểm tra virtual environment
 cd backend
 source venv/bin/activate
-pip list
-
-# Reinstall dependencies
-pip install -r requirements.txt --force-reinstall
+pip install -r requirements.txt
 ```
-
-#### 2. Lỗi API Keys
-
-```bash
-# Kiểm tra file .env
-cat backend/.env
-
-# Test API keys
-python -c "
-import os
-from dotenv import load_dotenv
-load_dotenv()
-print('Gemini:', os.getenv('GEMINI_API_KEY')[:10] + '...')
-print('Pinecone:', os.getenv('PINECONE_API_KEY')[:10] + '...')
-"
-```
-
-#### 3. Frontend không kết nối Backend
-
-- Kiểm tra backend đã chạy: http://localhost:8000/health
-- Kiểm tra CORS settings trong `backend/app/main.py`
-- Mở Developer Tools (F12) để xem lỗi JavaScript
 
 #### 4. Port đã được sử dụng
-
 ```bash
-# Kiểm tra port 8000
-lsof -i :8000
+# Kiểm tra ports
+lsof -i :3000  # Frontend
+lsof -i :5000  # .NET API
+lsof -i :8000  # Python AI
 
-# Kill process sử dụng port
-kill -9 $(lsof -t -i:8000)
-
-# Hoặc đổi port trong scripts
+# Kill processes
+./stop-all.sh
 ```
 
-### Logs và Debugging
-
+### Logs
 ```bash
-# Xem logs backend
-tail -f logs/backend.log
-
-# Xem logs frontend
+# Xem logs
+tail -f logs/dotnet-api.log
+tail -f logs/python-ai.log
 tail -f logs/frontend.log
-
-# Check processes
-ps aux | grep -E "(uvicorn|python.*http.server)"
 ```
 
-## 📊 API Documentation
+## 📊 Database Schema
 
-### Endpoints
+### Tables
+- **users**: Thông tin người dùng, authentication
+- **conversations**: Cuộc trò chuyện của user
+- **messages**: Tin nhắn (user + assistant)
+- **daily_stats**: Thống kê hàng ngày
 
-#### `GET /`
-- **Mô tả**: Thông tin API
-- **Response**: `{"message": "Enhanced HCM Thought Chatbot API", "version": "2.0.0", "status": "running"}`
+### Key Features
+- **JSONB support**: Lưu sources của AI response
+- **Confidence scores**: Độ tin cậy của câu trả lời
+- **Automatic timestamps**: Created/updated timestamps
+- **JWT Authentication**: Secure login system
 
-#### `GET /health`
-- **Mô tả**: Kiểm tra sức khỏe hệ thống
-- **Response**: `{"status": "healthy", "stats": {...}}`
+## 🎉 Kết luận
 
-#### `POST /chat`
-- **Mô tả**: Chat với AI
-- **Request Body**:
-  ```json
-  {
-    "question": "Câu hỏi của bạn"
-  }
-  ```
-- **Response**:
-  ```json
-  {
-    "answer": "Câu trả lời từ AI",
-    "sources": ["Nguồn 1", "Nguồn 2"],
-    "confidence": 85,
-    "last_updated": "2024-01-01T00:00:00"
-  }
-  ```
+Hệ thống HCM Chatbot đã hoàn thiện với kiến trúc microservices:
 
-## 🤝 Đóng góp
+✅ **Authentication & User Management** với JWT
+✅ **ChatGPT-like Interface** với real-time chat
+✅ **RAG AI System** tích hợp Gemini
+✅ **PostgreSQL Database** lưu trữ persistent
+✅ **Admin Dashboard** quản lý user
+✅ **Responsive Design** mobile-friendly
+✅ **One-command Startup** với bash scripts
 
-### Cách đóng góp
+### 🚀 Quick Start Summary
 
-1. **Fork** project
-2. **Clone** về máy local
-3. **Tạo branch** mới: `git checkout -b feature/amazing-feature`
-4. **Commit** changes: `git commit -m 'Add amazing feature'`
-5. **Push** lên branch: `git push origin feature/amazing-feature`
-6. **Tạo Pull Request**
+```bash
+# 1. Khởi động PostgreSQL
+brew services start postgresql
 
-### Coding Standards
+# 2. Clone và setup
+git clone <repo>
+cd hcm-chatbot
+chmod +x *.sh
 
-- **Python**: PEP 8, type hints
-- **JavaScript**: ES6+, modern syntax
-- **CSS**: BEM methodology
-- **Git**: Conventional commits
+# 3. Chạy hệ thống
+./start-all.sh
 
-## 📄 License
+# 4. Truy cập
+open http://localhost:3000/welcome.html
 
-Dự án này được phát hành dưới [MIT License](LICENSE).
+# 5. Đăng nhập admin
+# Username: admin
+# Password: admin123
+```
 
-## 👨‍💻 Tác giả
-
-- **Developer**: Đào Xuân Long
-- **Email**: daoxuanlong492004@gmail.com
-- **GitHub**: Dixeliare
-
-## 🙏 Acknowledgments
-
-- **Chủ tịch Hồ Chí Minh** - Nguồn cảm hứng và kiến thức
-- **Google Gemini AI** - AI technology
-- **Pinecone** - Vector database
-- **FastAPI** - Modern web framework
-- **Cộng đồng Vietnam Developer** - Support và feedback
+**🇻🇳 Ready to use như ChatGPT! 🇻🇳**
 
 ---
 
-<div align="center">
+**📋 Commands:**
+- `./start-all.sh` - Khởi động toàn bộ
+- `./stop-all.sh` - Dừng toàn bộ
+- `./status.sh` - Kiểm tra trạng thái
+- `SETUP_GUIDE.md` - Hướng dẫn chi tiết
 
-**🇻🇳 Made with ❤️ for Vietnam 🇻🇳**
-
-*"Không có gì quý hơn độc lập tự do"*
-
-</div>
+*"Không có gì quý hơn độc lập tự do"* - Hồ Chí Minh

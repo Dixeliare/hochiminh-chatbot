@@ -13,7 +13,7 @@ public class CreateMessageRequest
     [Required]
     public string Role { get; set; } = string.Empty; // "user" or "assistant"
 
-    public string? Sources { get; set; }
+    public List<string>? Sources { get; set; }
 
     public int? ConfidenceScore { get; set; }
 }
@@ -34,7 +34,7 @@ public class MessageDto
     public Guid ConversationId { get; set; }
     public string Content { get; set; } = string.Empty;
     public string Role { get; set; } = string.Empty;
-    public string? Sources { get; set; }
+    public object? Sources { get; set; } // Can be List<string> or JSONB
     public int? ConfidenceScore { get; set; }
     public DateTime CreatedAt { get; set; }
 }

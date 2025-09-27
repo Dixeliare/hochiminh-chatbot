@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Data;
+using Models.DTOs;
 using Repositories;
 using Repositories.Interfaces;
 using Services.Interfaces;
@@ -74,5 +75,36 @@ public class ConversationService : IConversationService
 
         await _conversationRepository.UpdateAsync(conversation);
         await _unitOfWork.CompleteAsync();
+    }
+
+    // Additional methods for ChatController compatibility
+    public async Task<IEnumerable<conversation>> GetByUserIdAsync(Guid userId)
+    {
+        return await GetUserConversationsAsync(userId);
+    }
+
+    public async Task<conversation?> GetByIdAsync(Guid id)
+    {
+        return await GetConversationByIdAsync(id);
+    }
+
+    public async Task<conversation> CreateAsync(CreateConversationRequest request, Guid userId)
+    {
+        var conversation = new conversation
+        {
+            id = Guid.NewGuid(),
+            user_id = userId,
+            title = request.Title,
+            message_count = 0,
+            created_at = DateTime.UtcNow,
+            updated_at = DateTime.UtcNow
+        };
+
+        return await CreateConversationAsync(conversation);
+    }
+
+    public async Task<bool> DeleteAsync(Guid id)
+    {
+        return await DeleteConversationAsync(id);
     }
 }

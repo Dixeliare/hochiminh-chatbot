@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 using Data;
+using Models.DTOs;
 using Repositories;
 using Repositories.Interfaces;
 using Services.Interfaces;
@@ -65,5 +67,27 @@ public class MessageService : IMessageService
     {
         var messages = await _messageRepository.GetAllAsync();
         return messages.Count();
+    }
+
+    // Additional methods for ChatController compatibility
+    public async Task<IEnumerable<message>> GetByConversationIdAsync(Guid conversationId)
+    {
+        return await GetConversationMessagesAsync(conversationId);
+    }
+
+    public async Task<message> CreateAsync(CreateMessageRequest request)
+    {
+        var message = new message
+        {
+            id = Guid.NewGuid(),
+            conversation_id = request.ConversationId,
+            content = request.Content,
+            role = request.Role,
+            sources = request.Sources != null ? JsonSerializer.Serialize(request.Sources) : null,
+            confidence_score = request.ConfidenceScore,
+            created_at = DateTime.UtcNow
+        };
+
+        return await CreateMessageAsync(message);
     }
 }
