@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Data;
 using Microsoft.EntityFrameworkCore;
 using Repositories.Interfaces;
@@ -20,20 +23,5 @@ public class UserRepository : GenericRepository<user>, IUserRepository
     public async Task<user> GetByIdAsync(Guid id)
     {
         return await _dbSet.Include(c => c.conversations).FirstOrDefaultAsync(c => c.id == id);
-    }
-
-    public Task<user> AddAsync(user entity)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task UpdateAsync(user entity)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<bool> DeleteAsync(int id)
-    {
-        throw new NotImplementedException();
     }
 }
