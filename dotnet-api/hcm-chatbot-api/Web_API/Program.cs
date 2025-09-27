@@ -131,7 +131,7 @@ using (var scope = app.Services.CreateScope())
         var adminUser = await authService.GetUserByUsernameAsync("admin");
         if (adminUser == null)
         {
-            await authService.RegisterAsync("admin", "admin@hcmchatbot.com", "Admin123!", "System Administrator");
+            await authService.RegisterAsync("admin", "admin@hcmchatbot.com", "admin123", "System Administrator");
             adminUser = await authService.GetUserByUsernameAsync("admin");
             if (adminUser != null)
             {
