@@ -16,7 +16,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new() { Title = "HCM Chatbot API", Version = "v1" });
+    c.SwaggerDoc("v1", new() { Title = "HCM Chatbot Web_API API", Version = "v1" });
     c.AddSecurityDefinition("Bearer", new()
     {
         Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
@@ -95,12 +95,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "HCM Chatbot API V1");
-        c.RoutePrefix = string.Empty; // Makes Swagger UI available at root
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "HCM Chatbot Web_API API V1");
+        c.RoutePrefix = "swagger"; // Makes Swagger UI available at /swagger
     });
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection(); // Disabled for development
 
 app.UseCors("AllowSpecificOrigins");
 
@@ -110,7 +110,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 // Health check endpoint
-app.MapGet("/health", () => Results.Ok(new { Status = "Healthy", Timestamp = DateTime.UtcNow }))
+app.MapGet("/health", () => Results.Ok(new { Status = "Healthy", Timestamp = DateTime.UtcNow, Service = "Web_API" }))
     .WithName("HealthCheck")
     .WithOpenApi();
 
@@ -131,19 +131,19 @@ using (var scope = app.Services.CreateScope())
         var adminUser = await authService.GetUserByUsernameAsync("admin");
         if (adminUser == null)
         {
-            await authService.RegisterAsync("admin", "admin@hcmchatbot.com", "admin123", "System Administrator");
+            await authService.RegisterAsync("admin", "admin@hcmchatbot.com", "Admin123!", "System Administrator");
             adminUser = await authService.GetUserByUsernameAsync("admin");
             if (adminUser != null)
             {
                 adminUser.role = "admin";
                 await userService.UpdateUserAsync(adminUser);
-                Console.WriteLine("Admin user created successfully");
+                Console.WriteLine("Admin user created successfully via Web_API");
             }
         }
     }
     catch (Exception ex)
     {
-        Console.WriteLine($"Error during startup: {ex.Message}");
+        Console.WriteLine($"Error during Web_API startup: {ex.Message}");
     }
 }
 

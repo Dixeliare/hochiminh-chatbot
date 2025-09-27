@@ -38,10 +38,9 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
     public async Task UpdateAsync(T entity)
     {
         _context.Entry(entity).State = EntityState.Modified;
-        await _context.SaveChangesAsync();
     }
     
-    public async Task<bool> DeleteAsync(int id)
+    public async Task<bool> DeleteAsync(Guid id)
     {
         var item = await _dbSet.FindAsync(id);
 
@@ -49,7 +48,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         {
             return false;
         }
-        
+
         _dbSet.Remove(item);
         return true;
     }
