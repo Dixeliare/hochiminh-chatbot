@@ -39,7 +39,7 @@ check_database() {
 
 # Check all services
 check_service "Frontend Server" "http://localhost:3000" "3000"
-check_service ".NET API" "http://localhost:5000/health" "5000"
+check_service ".NET API" "http://localhost:9000/health" "9000"
 check_service "Python AI Backend" "http://localhost:8000/health" "8000"
 check_database
 
@@ -68,7 +68,7 @@ echo ""
 
 # Show URLs if services are running
 frontend_running=$(lsof -Pi :3000 -sTCP:LISTEN -t 2>/dev/null)
-api_running=$(lsof -Pi :5000 -sTCP:LISTEN -t 2>/dev/null)
+api_running=$(lsof -Pi :9000 -sTCP:LISTEN -t 2>/dev/null)
 ai_running=$(lsof -Pi :8000 -sTCP:LISTEN -t 2>/dev/null)
 
 if [[ ! -z "$frontend_running" || ! -z "$api_running" || ! -z "$ai_running" ]]; then
@@ -80,8 +80,8 @@ if [[ ! -z "$frontend_running" || ! -z "$api_running" || ! -z "$ai_running" ]]; 
     fi
 
     if [ ! -z "$api_running" ]; then
-        echo "   .NET API:     http://localhost:5000/swagger"
-        echo "   Health Check: http://localhost:5000/health"
+        echo "   .NET API:     http://localhost:9000/swagger"
+        echo "   Health Check: http://localhost:9000/health"
     fi
 
     if [ ! -z "$ai_running" ]; then

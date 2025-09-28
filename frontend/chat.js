@@ -1,6 +1,6 @@
 class HCMChatApp {
     constructor() {
-        this.API_BASE = 'http://localhost:5000/api';
+        this.API_BASE = 'http://localhost:9000/api';
         this.currentConversationId = null;
         this.user = null;
         this.token = null;
@@ -227,7 +227,10 @@ class HCMChatApp {
                 createdAt: new Date().toISOString()
             });
 
-            // Send message to API
+            // Send message to API with timeout
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 seconds timeout
+
             const response = await this.fetchWithAuth('/chat/send', {
                 method: 'POST',
                 headers: {
@@ -236,8 +239,11 @@ class HCMChatApp {
                 body: JSON.stringify({
                     message: message,
                     conversationId: this.currentConversationId
-                })
+                }),
+                signal: controller.signal
             });
+
+            clearTimeout(timeoutId);
 
             if (response.ok) {
                 const data = await response.json();
@@ -262,7 +268,11 @@ class HCMChatApp {
 
         } catch (error) {
             console.error('Send message error:', error);
-            this.showError('Lỗi kết nối. Vui lòng thử lại.');
+            if (error.name === 'AbortError') {
+                this.showError('Timeout: AI đang xử lý quá lâu. Vui lòng thử câu hỏi ngắn hơn.');
+            } else {
+                this.showError('Lỗi kết nối. Vui lòng thử lại.');
+            }
         } finally {
             this.setInputDisabled(false);
             this.hideTypingIndicator();

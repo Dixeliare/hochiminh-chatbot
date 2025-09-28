@@ -88,7 +88,10 @@ builder.Services.AddScoped<IMessageService, MessageService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
 
 // HTTP Client for AI service
-builder.Services.AddHttpClient();
+builder.Services.AddHttpClient("AiService", client =>
+{
+    client.Timeout = TimeSpan.FromMinutes(2); // 2 minutes timeout for AI requests
+});
 
 var app = builder.Build();
 

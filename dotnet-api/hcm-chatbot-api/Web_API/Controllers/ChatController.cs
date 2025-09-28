@@ -60,7 +60,7 @@ public class ChatController : BaseController
             });
 
             // Call Python AI service
-            var httpClient = _httpClientFactory.CreateClient();
+            var httpClient = _httpClientFactory.CreateClient("AiService");
             var aiApiUrl = _configuration["AiService:BaseUrl"] ?? "http://localhost:8000";
 
             var aiRequest = new { question = request.Message };
@@ -72,12 +72,13 @@ public class ChatController : BaseController
             var aiResult = await aiResponse.Content.ReadFromJsonAsync<AiResponseDto>();
 
             // Save AI response
+            var sources = aiResult?.Sources?.Select(s => s.Source).ToList();
             var assistantMessage = await _messageService.CreateAsync(new CreateMessageRequest
             {
                 ConversationId = conv.id,
                 Content = aiResult?.Answer ?? "Sorry, I couldn't generate a response.",
                 Role = "assistant",
-                Sources = aiResult?.Sources,
+                Sources = sources,
                 ConfidenceScore = aiResult?.Confidence
             });
 
@@ -206,7 +207,16 @@ public class ChatApiResponse
 public class AiResponseDto
 {
     public string Answer { get; set; } = string.Empty;
-    public List<string> Sources { get; set; } = new();
+    public List<SourceDto> Sources { get; set; } = new();
     public int Confidence { get; set; }
     public string? LastUpdated { get; set; }
+}
+
+public class SourceDto
+{
+    public string Source { get; set; } = string.Empty;
+    public int Credibility { get; set; }
+    public string Type { get; set; } = string.Empty;
+    public string Url { get; set; } = string.Empty;
+    public string Document { get; set; } = string.Empty;
 }

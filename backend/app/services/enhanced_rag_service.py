@@ -15,7 +15,7 @@ class EnhancedRAGService:
         self.data_collector = WebDataCollector()
         
         genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-        self.model = genai.GenerativeModel('gemini-1.5-flash')
+        self.model = genai.GenerativeModel('gemini-2.5-flash')
         
         self.last_update = None
         print("Enhanced RAG Service v2.1 với improved citations sẵn sàng!")

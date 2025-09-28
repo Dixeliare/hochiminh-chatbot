@@ -99,9 +99,9 @@ echo "🚀 Starting services..."
 echo ""
 
 # 1. Start .NET API
-if start_service "NET_API" "cd dotnet-api/hcm-chatbot-api && dotnet run --project Web_API/Web_API.csproj --urls http://localhost:5000" 5000 "dotnet-api.log"; then
+if start_service "NET_API" "cd dotnet-api/hcm-chatbot-api && dotnet run --project Web_API/Web_API.csproj --urls http://localhost:9000" 9000 "dotnet-api.log"; then
     sleep 5
-    if wait_for_service ".NET API" "http://localhost:5000/health"; then
+    if wait_for_service ".NET API" "http://localhost:9000/health"; then
         echo ""
     else
         echo "❌ Failed to start .NET API"
@@ -143,7 +143,7 @@ echo "=========================================="
 echo ""
 echo "📍 Service URLs:"
 echo "   🌐 Frontend:    http://localhost:3000/welcome.html"
-echo "   🔗 .NET API:    http://localhost:5000/swagger"
+echo "   🔗 .NET API:    http://localhost:9000/swagger"
 echo "   🤖 Python AI:   http://localhost:8000/docs"
 echo ""
 echo "👤 Admin Account:"

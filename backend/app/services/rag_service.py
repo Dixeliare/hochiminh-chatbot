@@ -12,7 +12,7 @@ class RAGService:
         
         # Khởi tạo Gemini cho text generation với model name mới
         genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-        self.model = genai.GenerativeModel('gemini-1.5-flash')  # Model name mới
+        self.model = genai.GenerativeModel('gemini-2.5-flash')  # Model name mới
         
         print("RAG Service đã sẵn sàng!")
     

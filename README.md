@@ -142,9 +142,9 @@ echo "GEMINI_API_KEY=your_api_key_here" >> .env
 Sau khi chạy `./start-all.sh`, truy cập:
 
 - **🌐 Frontend**: http://localhost:3000/welcome.html
-- **🔗 .NET API**: http://localhost:5000/swagger
+- **🔗 .NET API**: http://localhost:9000/swagger
 - **🤖 Python AI**: http://localhost:8000/docs
-- **💾 Health Check**: http://localhost:5000/health
+- **💾 Health Check**: http://localhost:9000/health
 
 ## 👤 Tài khoản mặc định
 
@@ -215,11 +215,11 @@ Mở: http://localhost:3000/welcome.html
 
 ```bash
 # Health check
-curl http://localhost:5000/health
+curl http://localhost:9000/health
 curl http://localhost:8000/health
 
 # Test auth
-curl -X POST "http://localhost:5000/api/auth/login" \
+curl -X POST "http://localhost:9000/api/auth/login" \
      -H "Content-Type: application/json" \
      -d '{"username": "admin", "password": "admin123"}'
 ```

@@ -47,7 +47,7 @@ echo ""
 echo "🧹 Cleaning up remaining processes..."
 
 # Kill processes on specific ports
-for port in 3000 5000 8000; do
+for port in 3000 9000 8000; do
     pid=$(lsof -ti:$port 2>/dev/null)
     if [ ! -z "$pid" ]; then
         echo "🛑 Killing process on port $port (PID: $pid)..."
