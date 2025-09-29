@@ -15,5 +15,6 @@ public interface IConversationService
     Task<bool> DeleteConversationAsync(Guid id);
     Task<bool> DeleteAsync(Guid id);
     Task<IEnumerable<conversation>> GetRecentConversationsAsync(int count = 10);
+    Task<IEnumerable<conversation>> GetRecentConversationsWithUsersAsync(int count = 10);
     Task UpdateConversationMessageCountAsync(Guid conversationId);
 }

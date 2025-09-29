@@ -52,4 +52,9 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         _dbSet.Remove(item);
         return true;
     }
+
+    public AppDbContext GetDbContext()
+    {
+        return _context;
+    }
 }

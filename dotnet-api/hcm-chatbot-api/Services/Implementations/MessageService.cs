@@ -90,4 +90,18 @@ public class MessageService : IMessageService
 
         return await CreateMessageAsync(message);
     }
+
+    public async Task<IEnumerable<message>> GetRecentMessagesWithUsersAsync(int count = 50)
+    {
+        var dbContext = _messageRepository.GetDbContext();
+
+        var messages = await dbContext.messages
+            .Include(m => m.conversation)
+            .ThenInclude(c => c.user)
+            .OrderByDescending(m => m.created_at)
+            .Take(count)
+            .ToListAsync();
+
+        return messages;
+    }
 }

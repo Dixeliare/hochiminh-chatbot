@@ -14,4 +14,8 @@ public interface IUserService
     Task<int> GetTotalUsersCountAsync();
     Task<int> GetActiveUsersCountAsync();
     Task UpdateUserStatsAsync(Guid userId, int messageIncrement = 0, int conversationIncrement = 0);
+
+    // User management methods for admin dashboard
+    Task<bool> UpdateUserStatusAsync(Guid userId, string status);
+    Task<bool> UpdateUserRoleAsync(Guid userId, string role);
 }

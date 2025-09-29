@@ -37,6 +37,7 @@ public class MessageDto
     public object? Sources { get; set; } // Can be List<string> or JSONB
     public int? ConfidenceScore { get; set; }
     public DateTime CreatedAt { get; set; }
+    public string Username { get; set; } = string.Empty;
 }
 
 public class ChatRequest

@@ -107,4 +107,21 @@ public class ConversationService : IConversationService
     {
         return await DeleteConversationAsync(id);
     }
+
+    /// <summary>
+    /// Lấy danh sách conversation kèm thông tin user (JOIN)
+    /// </summary>
+    public async Task<IEnumerable<conversation>> GetRecentConversationsWithUsersAsync(int count = 10)
+    {
+        // Sử dụng DbContext để JOIN với users table
+        var dbContext = _conversationRepository.GetDbContext();
+
+        var conversations = await dbContext.conversations
+            .Include(c => c.user)
+            .OrderByDescending(c => c.created_at)
+            .Take(count)
+            .ToListAsync();
+
+        return conversations;
+    }
 }

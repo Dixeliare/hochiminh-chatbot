@@ -103,4 +103,46 @@ public class UserService : IUserService
         await _userRepository.UpdateAsync(user);
         await _unitOfWork.CompleteAsync();
     }
+
+    /// <summary>
+    /// Cập nhật trạng thái người dùng (enable/disable)
+    /// </summary>
+    public async Task<bool> UpdateUserStatusAsync(Guid userId, string status)
+    {
+        if (status != "enable" && status != "disable")
+        {
+            throw new ArgumentException("Status must be 'enable' or 'disable'");
+        }
+
+        var user = await _userRepository.GetByIdAsync(userId);
+        if (user == null) return false;
+
+        user.status = status;
+        user.updated_at = DateTime.UtcNow;
+
+        await _userRepository.UpdateAsync(user);
+        await _unitOfWork.CompleteAsync();
+        return true;
+    }
+
+    /// <summary>
+    /// Cập nhật vai trò người dùng (user/admin)
+    /// </summary>
+    public async Task<bool> UpdateUserRoleAsync(Guid userId, string role)
+    {
+        if (role != "user" && role != "admin")
+        {
+            throw new ArgumentException("Role must be 'user' or 'admin'");
+        }
+
+        var user = await _userRepository.GetByIdAsync(userId);
+        if (user == null) return false;
+
+        user.role = role;
+        user.updated_at = DateTime.UtcNow;
+
+        await _userRepository.UpdateAsync(user);
+        await _unitOfWork.CompleteAsync();
+        return true;
+    }
 }

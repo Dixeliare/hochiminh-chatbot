@@ -13,5 +13,6 @@ public interface IMessageService
     Task<message> UpdateMessageAsync(message message);
     Task<bool> DeleteMessageAsync(Guid id);
     Task<IEnumerable<message>> GetRecentMessagesAsync(int count = 50);
+    Task<IEnumerable<message>> GetRecentMessagesWithUsersAsync(int count = 50);
     Task<int> GetTotalMessagesCountAsync();
 }

@@ -51,3 +51,19 @@ public class MessageStatsDto
     public int ThisMonthCount { get; set; }
     public double AveragePerConversation { get; set; }
 }
+
+/// <summary>
+/// DTO for updating user status (enable/disable)
+/// </summary>
+public class UpdateUserStatusDto
+{
+    public string Status { get; set; } = string.Empty;
+}
+
+/// <summary>
+/// DTO for updating user role (admin promotion)
+/// </summary>
+public class UpdateUserRoleDto
+{
+    public string Role { get; set; } = string.Empty;
+}

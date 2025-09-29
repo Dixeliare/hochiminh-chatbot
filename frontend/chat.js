@@ -1,63 +1,104 @@
+/**
+ * HCM CHATBOT FRONTEND APPLICATION
+ * Class chính quản lý toàn bộ giao diện và logic frontend
+ *
+ * Chức năng:
+ * - Xác thực người dùng với JWT token
+ * - Quản lý cuộc trò chuyện (tạo mới, load, xóa)
+ * - Gửi tin nhắn và hiển thị phản hồi AI
+ * - Tích hợp với .NET API backend
+ */
 class HCMChatApp {
     constructor() {
-        this.API_BASE = 'http://localhost:9000/api';
-        this.currentConversationId = null;
-        this.user = null;
-        this.token = null;
-        this.conversations = [];
+        // ===== CẤU HÌNH API =====
+        this.API_BASE = 'http://localhost:9000/api'; // URL của .NET API
 
+        // ===== STATE MANAGEMENT =====
+        this.currentConversationId = null; // ID cuộc trò chuyện hiện tại
+        this.user = null; // Thông tin người dùng đã đăng nhập
+        this.token = null; // JWT token cho authentication
+        this.conversations = []; // Danh sách cuộc trò chuyện
+
+        // Khởi tạo ứng dụng
         this.init();
     }
 
+    /**
+     * KHỞI TẠO ỨNG DỤNG
+     * Kiểm tra authentication và setup giao diện
+     */
     async init() {
-        // Check authentication
-        this.token = localStorage.getItem('token');
-        const userStr = localStorage.getItem('user');
+        // ===== KIỂM TRA AUTHENTICATION =====
+        this.token = localStorage.getItem('token'); // Lấy token từ localStorage
+        const userStr = localStorage.getItem('user'); // Lấy thông tin user
 
+        // Nếu chưa đăng nhập, chuyển về trang auth
         if (!this.token || !userStr) {
             window.location.href = 'auth.html';
             return;
         }
 
         try {
+            // Parse thông tin user từ JSON
             this.user = JSON.parse(userStr);
+
+            // Kiểm tra quyền truy cập - Admin không được chat
+            if (this.user.role === 'admin') {
+                alert('Admin không được sử dụng chức năng chat. Chuyển về trang quản trị.');
+                window.location.href = 'admin.html';
+                return;
+            }
+
+            // Setup giao diện và events
             this.setupUI();
             this.bindEvents();
+
+            // Load danh sách cuộc trò chuyện
             await this.loadConversations();
         } catch (error) {
             console.error('Init error:', error);
+            // Nếu có lỗi, logout và về trang auth
             this.logout();
         }
     }
 
+    /**
+     * SETUP GIAO DIỆN
+     * Cấu hình thông tin user và auto-resize textarea
+     */
     setupUI() {
-        // Update user info in sidebar
+        // Hiển thị thông tin user trong sidebar
         document.getElementById('userName').textContent = this.user.fullName || this.user.username;
         document.getElementById('userRole').textContent = this.user.role || 'user';
 
-        // Auto-resize textarea
+        // Auto-resize textarea khi người dùng gõ
         const messageInput = document.getElementById('messageInput');
         messageInput.addEventListener('input', this.autoResizeTextarea);
     }
 
+    /**
+     * BIND EVENTS
+     * Gắn các event listener cho tương tác người dùng
+     */
     bindEvents() {
-        // Chat form submission
+        // Xử lý submit form chat
         document.getElementById('chatForm').addEventListener('submit', (e) => {
-            e.preventDefault();
+            e.preventDefault(); // Ngăn reload trang
             this.sendMessage();
         });
 
-        // Mobile overlay click
+        // Đóng sidebar khi click overlay (mobile)
         document.getElementById('mobileOverlay').addEventListener('click', () => {
             this.closeSidebar();
         });
 
-        // Enter key handling
+        // Xử lý phím Enter để gửi tin nhắn
         document.getElementById('messageInput').addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
+                e.preventDefault(); // Ngăn xuống dòng
                 this.sendMessage();
             }
+            // Shift+Enter vẫn cho phép xuống dòng
         });
     }
 
@@ -207,30 +248,43 @@ class HCMChatApp {
         return content.replace(/\n/g, '<br>');
     }
 
+    /**
+     * GỬI TIN NHẮN - Function chính xử lý chat
+     *
+     * Quy trình:
+     * 1. Validate input và update UI
+     * 2. Gửi request đến .NET API
+     * 3. API gọi Python AI và trả về response
+     * 4. Hiển thị phản hồi AI trên giao diện
+     */
     async sendMessage() {
         const input = document.getElementById('messageInput');
         const message = input.value.trim();
 
+        // Không gửi nếu tin nhắn trống
         if (!message) return;
 
-        // Clear input and disable form
+        // ===== BƯỚC 1: CHUẨN BỊ UI =====
+        // Xóa input và disable form để tránh spam
         input.value = '';
         input.style.height = 'auto';
         this.setInputDisabled(true);
-        this.showTypingIndicator();
+        this.showTypingIndicator(); // Hiển thị "AI đang trả lời..."
 
         try {
-            // Add user message to UI immediately
+            // ===== BƯỚC 2: HIỂN THỊ TIN NHẮN NGƯỜI DÙNG NGAY LẬP TỨC =====
             this.addMessageToUI({
                 content: message,
                 role: 'user',
                 createdAt: new Date().toISOString()
             });
 
-            // Send message to API with timeout
+            // ===== BƯỚC 3: GỬI REQUEST ĐẾN .NET API =====
+            // Tạo AbortController để timeout sau 60 giây
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 seconds timeout
 
+            // Gọi .NET API với authentication
             const response = await this.fetchWithAuth('/chat/send', {
                 method: 'POST',
                 headers: {
@@ -238,42 +292,47 @@ class HCMChatApp {
                 },
                 body: JSON.stringify({
                     message: message,
-                    conversationId: this.currentConversationId
+                    conversationId: this.currentConversationId // null nếu cuộc trò chuyện mới
                 }),
-                signal: controller.signal
+                signal: controller.signal // Cho phép timeout
             });
 
             clearTimeout(timeoutId);
 
+            // ===== BƯỚC 4: XỬ LÝ RESPONSE =====
             if (response.ok) {
                 const data = await response.json();
-                const result = data.data;
+                const result = data.data; // ChatApiResponse từ .NET
 
-                // Update current conversation ID if new conversation was created
+                // Nếu tạo cuộc trò chuyện mới, lưu ID
                 if (!this.currentConversationId) {
                     this.currentConversationId = result.conversationId;
                 }
 
-                // Add assistant message to UI
+                // Hiển thị phản hồi AI với sources và confidence
                 this.addMessageToUI(result.assistantMessage);
 
-                // Refresh conversations list
+                // Cập nhật danh sách cuộc trò chuyện trong sidebar
                 await this.loadConversations();
                 this.hideEmptyState();
 
             } else {
+                // Xử lý lỗi từ API
                 const errorData = await response.json();
                 this.showError(errorData.message || 'Có lỗi xảy ra khi gửi tin nhắn');
             }
 
         } catch (error) {
             console.error('Send message error:', error);
+            // Xử lý các loại lỗi khác nhau
             if (error.name === 'AbortError') {
                 this.showError('Timeout: AI đang xử lý quá lâu. Vui lòng thử câu hỏi ngắn hơn.');
             } else {
                 this.showError('Lỗi kết nối. Vui lòng thử lại.');
             }
         } finally {
+            // ===== BƯỚC 5: CLEANUP =====
+            // Luôn enable lại form và ẩn typing indicator
             this.setInputDisabled(false);
             this.hideTypingIndicator();
             document.getElementById('messageInput').focus();
@@ -404,21 +463,32 @@ class HCMChatApp {
         }, 5000);
     }
 
+    /**
+     * FETCH VỚI AUTHENTICATION
+     * Wrapper cho fetch API tự động thêm JWT token và xử lý unauthorized
+     *
+     * @param {string} endpoint - API endpoint (VD: '/chat/send')
+     * @param {object} options - Fetch options (method, body, headers, etc.)
+     * @returns {Promise<Response>} - Response từ server
+     */
     async fetchWithAuth(endpoint, options = {}) {
-        const url = this.API_BASE + endpoint;
+        const url = this.API_BASE + endpoint; // Tạo URL đầy đủ
+
+        // Thêm Authorization header với JWT token
         const headers = {
-            'Authorization': `Bearer ${this.token}`,
-            ...options.headers
+            'Authorization': `Bearer ${this.token}`, // Bearer token format
+            ...options.headers // Merge với headers khác
         };
 
+        // Gọi API với authenticated headers
         const response = await fetch(url, {
             ...options,
             headers
         });
 
-        // If unauthorized, redirect to login
+        // Nếu token hết hạn hoặc không hợp lệ, logout
         if (response.status === 401) {
-            this.logout();
+            this.logout(); // Xóa token và về trang đăng nhập
             return;
         }
 
@@ -453,7 +523,9 @@ class HCMChatApp {
     }
 }
 
-// Global functions for HTML onclick events
+// ===== GLOBAL FUNCTIONS CHO HTML ONCLICK EVENTS =====
+// Các function này được gọi trực tiếp từ HTML onclick attributes
+
 function toggleSidebar() {
     chatApp.toggleSidebar();
 }
@@ -470,13 +542,15 @@ function sendSuggestedMessage(message) {
     chatApp.sendSuggestedMessage(message);
 }
 
-// Initialize the app when page loads
+// ===== KHỞI TẠO ỨNG DỤNG =====
 let chatApp;
 document.addEventListener('DOMContentLoaded', () => {
+    // Khởi tạo chatbot khi DOM đã load xong
     chatApp = new HCMChatApp();
 });
 
-// Add CSS for slide-in animation
+// ===== DYNAMIC CSS =====
+// Thêm CSS animation cho error notifications
 const style = document.createElement('style');
 style.textContent = `
     @keyframes slideIn {

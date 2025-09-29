@@ -355,9 +355,13 @@
 
                     showSuccess('Đăng nhập thành công! Đang chuyển hướng...');
 
-                    // Redirect to chat page
+                    // Redirect based on user role
                     setTimeout(() => {
-                        window.location.href = 'chat.html';
+                        if (data.data.user.role === 'admin') {
+                            window.location.href = 'admin.html';
+                        } else {
+                            window.location.href = 'chat.html';
+                        }
                     }, 1500);
                 } else {
                     showError(data.message || 'Đăng nhập thất bại');

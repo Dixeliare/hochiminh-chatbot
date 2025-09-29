@@ -1,3 +1,4 @@
+// Import các thư viện cần thiết
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Data;
@@ -6,15 +7,24 @@ using Services.Interfaces;
 
 namespace Web_API;
 
+/// <summary>
+/// AuthController - Xử lý xác thực và đăng ký người dùng
+/// Endpoints: /api/auth/register, /api/auth/login
+/// Tạo và validate JWT tokens
+/// </summary>
 public class AuthController : BaseController
 {
-    private readonly IAuthService _authService;
+    private readonly IAuthService _authService; // Service xử lý logic authentication
 
     public AuthController(IAuthService authService)
     {
         _authService = authService;
     }
 
+    /// <summary>
+    /// API đăng ký tài khoản mới
+    /// Tạo user trong database và trả về JWT token
+    /// </summary>
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterRequest request)
     {

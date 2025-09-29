@@ -27,6 +27,7 @@ public class ConversationDto
     public int MessageCount { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
+    public string Username { get; set; } = string.Empty;
     public UserDto? User { get; set; }
     public List<MessageDto> Messages { get; set; } = new();
 }
