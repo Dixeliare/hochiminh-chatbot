@@ -10,4 +10,14 @@ public interface IAuthService
     Task<user?> GetUserByEmailAsync(string email);
     Task<bool> ValidateTokenAsync(string token);
     string GenerateJwtToken(user user);
+
+    /// <summary>
+    /// Cập nhật thông tin profile của user
+    /// </summary>
+    Task<user> UpdateUserProfileAsync(string username, string? email = null, string? fullName = null, string? avatarUrl = null);
+
+    /// <summary>
+    /// Đổi mật khẩu user
+    /// </summary>
+    Task<bool> ChangePasswordAsync(string username, string currentPassword, string newPassword);
 }

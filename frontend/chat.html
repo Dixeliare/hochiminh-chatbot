@@ -79,6 +79,173 @@
             background: rgba(255,255,255,0.3);
         }
 
+        .profile-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            margin-left: auto;
+        }
+
+        .profile-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.1);
+        }
+
+        /* Profile Modal */
+        .profile-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .profile-modal-content {
+            background-color: white;
+            margin: 2% auto;
+            padding: 20px;
+            border-radius: 15px;
+            width: 95%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .profile-modal-content {
+                margin: 1% auto;
+                padding: 15px;
+                width: 98%;
+                max-height: 95vh;
+                border-radius: 10px;
+            }
+
+            .profile-form-group input {
+                padding: 10px;
+                font-size: 16px; /* Prevent zoom on iOS */
+            }
+
+            .profile-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .profile-btn-primary,
+            .profile-btn-secondary {
+                width: 100%;
+                padding: 15px;
+                font-size: 16px;
+            }
+        }
+
+        .profile-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .profile-modal-header h2 {
+            color: #da020e;
+            margin: 0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .close-btn:hover {
+            color: #da020e;
+        }
+
+        .profile-form-group {
+            margin-bottom: 20px;
+        }
+
+        .profile-form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .profile-form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .profile-form-group input:focus {
+            outline: none;
+            border-color: #da020e;
+        }
+
+        .profile-form-group input[readonly] {
+            background-color: #f5f5f5;
+            color: #666;
+        }
+
+        .profile-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-top: 30px;
+        }
+
+        .profile-btn-primary {
+            padding: 12px 24px;
+            background: #da020e;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s ease;
+        }
+
+        .profile-btn-primary:hover {
+            background: #b8010c;
+        }
+
+        .profile-btn-secondary {
+            padding: 12px 24px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s ease;
+        }
+
+        .profile-btn-secondary:hover {
+            background: #545b62;
+        }
+
         .conversations-list {
             flex: 1;
             overflow-y: auto;
@@ -555,6 +722,9 @@
                     <h3 id="userName">Loading...</h3>
                     <span id="userRole">user</span>
                 </div>
+                <button class="profile-btn" onclick="openUserProfile()" title="Chỉnh sửa profile" id="profileButton">
+                    <i class="fas fa-cog"></i>
+                </button>
             </div>
             <button class="new-chat-btn" onclick="startNewChat()">
                 <i class="fas fa-plus"></i> Cuộc trò chuyện mới
@@ -642,6 +812,235 @@
         </div>
     </div>
 
+    <!-- Profile Modal -->
+    <div id="profileModal" class="profile-modal">
+        <div class="profile-modal-content">
+            <div class="profile-modal-header">
+                <h2><i class="fas fa-user-edit"></i> Chỉnh sửa Profile</h2>
+                <button class="close-btn" onclick="closeUserProfile()">&times;</button>
+            </div>
+
+            <form id="userProfileForm">
+                <div class="profile-form-group">
+                    <label for="profileUsername">Tên đăng nhập:</label>
+                    <input type="text" id="profileUsername" readonly>
+                </div>
+
+                <div class="profile-form-group">
+                    <label for="profileEmail">Email:</label>
+                    <input type="email" id="profileEmail" required>
+                </div>
+
+                <div class="profile-form-group">
+                    <label for="profileFullName">Họ và tên:</label>
+                    <input type="text" id="profileFullName" required>
+                </div>
+
+                <div class="profile-form-group">
+                    <label for="profileRole">Vai trò:</label>
+                    <input type="text" id="profileRole" readonly>
+                </div>
+
+                <div style="border-top: 2px solid #f0f0f0; padding-top: 20px; margin-top: 20px;">
+                    <h3 style="margin-bottom: 15px; color: #333;">Đổi mật khẩu</h3>
+
+                    <div class="profile-form-group">
+                        <label for="userCurrentPassword">Mật khẩu hiện tại:</label>
+                        <input type="password" id="userCurrentPassword">
+                    </div>
+
+                    <div class="profile-form-group">
+                        <label for="userNewPassword">Mật khẩu mới:</label>
+                        <input type="password" id="userNewPassword">
+                    </div>
+
+                    <div class="profile-form-group">
+                        <label for="userConfirmPassword">Xác nhận mật khẩu mới:</label>
+                        <input type="password" id="userConfirmPassword">
+                    </div>
+                </div>
+
+                <div class="profile-buttons">
+                    <button type="button" class="profile-btn-secondary" onclick="closeUserProfile()">Hủy</button>
+                    <button type="button" class="profile-btn-primary" onclick="updateUserProfile()">Cập nhật Profile</button>
+                    <button type="button" class="profile-btn-primary" onclick="changeUserPassword()">Đổi mật khẩu</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Profile functionality - Embedded to bypass cache issues
+
+        // ===== EMBEDDED PROFILE FUNCTIONS =====
+        // Bypass cache issues by embedding directly in HTML
+
+        function openUserProfile() {
+            const modal = document.getElementById('profileModal');
+
+            // Lấy thông tin user từ localStorage
+            const userStr = localStorage.getItem('user');
+            if (!userStr) {
+                alert('Không tìm thấy thông tin người dùng!');
+                return;
+            }
+
+            try {
+                const user = JSON.parse(userStr);
+
+                // Điền thông tin vào form
+                document.getElementById('profileUsername').value = user.username || '';
+                document.getElementById('profileEmail').value = user.email || '';
+                document.getElementById('profileFullName').value = user.fullName || '';
+                document.getElementById('profileRole').value = user.role || 'user';
+
+                // Clear password fields
+                document.getElementById('userCurrentPassword').value = '';
+                document.getElementById('userNewPassword').value = '';
+                document.getElementById('userConfirmPassword').value = '';
+
+                // Hiển thị modal
+                modal.style.display = 'block';
+            } catch (error) {
+                console.error('Error parsing user data:', error);
+                alert('Lỗi khi tải thông tin người dùng!');
+            }
+        }
+
+        function closeUserProfile() {
+            const modal = document.getElementById('profileModal');
+            modal.style.display = 'none';
+        }
+
+        async function updateUserProfile() {
+            try {
+                // Lấy dữ liệu từ form
+                const email = document.getElementById('profileEmail').value.trim();
+                const fullName = document.getElementById('profileFullName').value.trim();
+
+                // Validation cơ bản
+                if (!email || !fullName) {
+                    alert('Vui lòng điền đầy đủ thông tin!');
+                    return;
+                }
+
+                // Lấy token từ localStorage
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    alert('Không tìm thấy token. Vui lòng đăng nhập lại!');
+                    return;
+                }
+
+                // Gọi API cập nhật profile
+                const response = await fetch('http://localhost:9000/api/auth/profile', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        fullName: fullName
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Cập nhật localStorage với thông tin mới
+                    const updatedUser = result.data;
+                    localStorage.setItem('user', JSON.stringify(updatedUser));
+
+                    // Cập nhật UI
+                    document.getElementById('username').textContent = updatedUser.fullName || updatedUser.username;
+
+                    alert('Cập nhật profile thành công!');
+                    closeUserProfile();
+                } else {
+                    alert('Lỗi: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error updating profile:', error);
+                alert('Lỗi khi cập nhật profile. Vui lòng thử lại!');
+            }
+        }
+
+        async function changeUserPassword() {
+            try {
+                // Lấy dữ liệu từ form
+                const currentPassword = document.getElementById('userCurrentPassword').value;
+                const newPassword = document.getElementById('userNewPassword').value;
+                const confirmPassword = document.getElementById('userConfirmPassword').value;
+
+                // Validation
+                if (!currentPassword || !newPassword || !confirmPassword) {
+                    alert('Vui lòng điền đầy đủ thông tin mật khẩu!');
+                    return;
+                }
+
+                if (newPassword !== confirmPassword) {
+                    alert('Mật khẩu mới và xác nhận mật khẩu không khớp!');
+                    return;
+                }
+
+                if (newPassword.length < 6) {
+                    alert('Mật khẩu mới phải có ít nhất 6 ký tự!');
+                    return;
+                }
+
+                // Lấy token từ localStorage
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    alert('Không tìm thấy token. Vui lòng đăng nhập lại!');
+                    return;
+                }
+
+                // Gọi API đổi mật khẩu
+                const response = await fetch('http://localhost:9000/api/auth/change-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    },
+                    body: JSON.stringify({
+                        currentPassword: currentPassword,
+                        newPassword: newPassword,
+                        confirmPassword: confirmPassword
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Clear password fields
+                    document.getElementById('userCurrentPassword').value = '';
+                    document.getElementById('userNewPassword').value = '';
+                    document.getElementById('userConfirmPassword').value = '';
+
+                    alert('Đổi mật khẩu thành công!');
+                } else {
+                    alert('Lỗi: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error changing password:', error);
+                alert('Lỗi khi đổi mật khẩu. Vui lòng thử lại!');
+            }
+        }
+
+        // Setup modal functionality
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // Setup modal click outside to close
+            const profileModal = document.getElementById('profileModal');
+            if (profileModal) {
+                profileModal.addEventListener('click', (e) => {
+                    if (e.target === profileModal) {
+                        closeUserProfile();
+                    }
+                });
+            }
+        });
+    </script>
     <script src="chat.js"></script>
 </body>
 </html>

@@ -47,3 +47,35 @@ public class UserDto
     public int TotalConversations { get; set; }
     public DateTime CreatedAt { get; set; }
 }
+
+/// <summary>
+/// DTO cho cập nhật thông tin profile của user
+/// </summary>
+public class UpdateProfileRequest
+{
+    [EmailAddress]
+    public string? Email { get; set; }
+
+    [StringLength(100)]
+    public string? FullName { get; set; }
+
+    [Url]
+    public string? AvatarUrl { get; set; }
+}
+
+/// <summary>
+/// DTO cho đổi mật khẩu
+/// </summary>
+public class ChangePasswordRequest
+{
+    [Required]
+    public string CurrentPassword { get; set; } = string.Empty;
+
+    [Required]
+    [StringLength(100, MinimumLength = 6)]
+    public string NewPassword { get; set; } = string.Empty;
+
+    [Required]
+    [Compare("NewPassword", ErrorMessage = "Mật khẩu xác nhận không khớp")]
+    public string ConfirmPassword { get; set; } = string.Empty;
+}

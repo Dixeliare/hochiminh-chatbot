@@ -118,6 +118,9 @@ class AdminDashboard {
             case 'messages':
                 await this.loadMessages();
                 break;
+            case 'profile':
+                await this.loadProfile();
+                break;
         }
     }
 
@@ -561,6 +564,120 @@ class AdminDashboard {
         } catch (error) {
             console.error('Error deleting user:', error);
             alert('Lỗi xóa người dùng. Vui lòng thử lại.');
+        }
+    }
+
+    /**
+     * TẢI PROFILE ADMIN
+     */
+    async loadProfile() {
+        try {
+            // Điền thông tin từ localStorage
+            document.getElementById('profileUsername').value = this.user.username || '';
+            document.getElementById('profileEmail').value = this.user.email || '';
+            document.getElementById('profileFullName').value = this.user.fullName || '';
+
+            console.log('Profile loaded for admin:', this.user.username);
+        } catch (error) {
+            console.error('Error loading profile:', error);
+        }
+    }
+
+    /**
+     * CẬP NHẬT PROFILE
+     */
+    async updateProfile() {
+        try {
+            const email = document.getElementById('profileEmail').value.trim();
+            const fullName = document.getElementById('profileFullName').value.trim();
+
+            if (!email) {
+                alert('Vui lòng nhập email!');
+                return;
+            }
+
+            const response = await this.fetchWithAuth(`/auth/profile`, {
+                method: 'PUT',
+                body: JSON.stringify({
+                    email: email,
+                    fullName: fullName
+                })
+            });
+
+            if (response && response.ok) {
+                const data = await response.json();
+                if (data.success) {
+                    // Cập nhật localStorage
+                    this.user.email = email;
+                    this.user.fullName = fullName;
+                    localStorage.setItem('user', JSON.stringify(this.user));
+
+                    // Cập nhật hiển thị tên
+                    document.getElementById('adminName').textContent = fullName || this.user.username;
+
+                    alert('Cập nhật profile thành công!');
+                } else {
+                    alert('Lỗi cập nhật profile: ' + (data.message || 'Không xác định'));
+                }
+            } else {
+                alert('Lỗi kết nối server khi cập nhật profile');
+            }
+        } catch (error) {
+            console.error('Error updating profile:', error);
+            alert('Lỗi cập nhật profile: ' + error.message);
+        }
+    }
+
+    /**
+     * ĐỔI MẬT KHẨU
+     */
+    async changePassword() {
+        try {
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // Validation
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                alert('Vui lòng điền đầy đủ thông tin mật khẩu!');
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                alert('Mật khẩu mới và xác nhận mật khẩu không khớp!');
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                alert('Mật khẩu mới phải có ít nhất 6 ký tự!');
+                return;
+            }
+
+            const response = await this.fetchWithAuth(`/auth/change-password`, {
+                method: 'POST',
+                body: JSON.stringify({
+                    currentPassword: currentPassword,
+                    newPassword: newPassword
+                })
+            });
+
+            if (response && response.ok) {
+                const data = await response.json();
+                if (data.success) {
+                    alert('Đổi mật khẩu thành công!');
+                    // Clear password fields
+                    document.getElementById('currentPassword').value = '';
+                    document.getElementById('newPassword').value = '';
+                    document.getElementById('confirmPassword').value = '';
+                } else {
+                    alert('Lỗi đổi mật khẩu: ' + (data.message || 'Không xác định'));
+                }
+            } else {
+                alert('Lỗi kết nối server khi đổi mật khẩu');
+            }
+        } catch (error) {
+            console.error('Error changing password:', error);
+            alert('Lỗi đổi mật khẩu: ' + error.message);
         }
     }
 

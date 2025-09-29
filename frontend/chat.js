@@ -542,11 +542,186 @@ function sendSuggestedMessage(message) {
     chatApp.sendSuggestedMessage(message);
 }
 
+// ===== USER PROFILE FUNCTIONS =====
+/**
+ * Mở modal chỉnh sửa profile cho user
+ */
+function openUserProfile() {
+    const modal = document.getElementById('profileModal');
+
+    // Lấy thông tin user từ localStorage
+    const userStr = localStorage.getItem('user');
+    if (!userStr) {
+        alert('Không tìm thấy thông tin người dùng!');
+        return;
+    }
+
+    try {
+        const user = JSON.parse(userStr);
+
+        // Điền thông tin vào form
+        document.getElementById('profileUsername').value = user.username || '';
+        document.getElementById('profileEmail').value = user.email || '';
+        document.getElementById('profileFullName').value = user.fullName || '';
+        document.getElementById('profileRole').value = user.role || 'user';
+
+        // Clear password fields
+        document.getElementById('userCurrentPassword').value = '';
+        document.getElementById('userNewPassword').value = '';
+        document.getElementById('userConfirmPassword').value = '';
+
+        // Hiển thị modal
+        modal.style.display = 'block';
+    } catch (error) {
+        console.error('Error parsing user data:', error);
+        alert('Lỗi khi tải thông tin người dùng!');
+    }
+}
+
+/**
+ * Đóng modal profile
+ */
+function closeUserProfile() {
+    const modal = document.getElementById('profileModal');
+    modal.style.display = 'none';
+}
+
+/**
+ * Cập nhật profile user
+ */
+async function updateUserProfile() {
+    try {
+        const email = document.getElementById('profileEmail').value.trim();
+        const fullName = document.getElementById('profileFullName').value.trim();
+
+        if (!email) {
+            alert('Vui lòng nhập email!');
+            return;
+        }
+
+        const token = localStorage.getItem('token');
+        if (!token) {
+            alert('Phiên đăng nhập đã hết hạn!');
+            window.location.href = 'auth.html';
+            return;
+        }
+
+        const response = await fetch('http://localhost:9000/api/auth/profile', {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: email,
+                fullName: fullName
+            })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success) {
+                // Cập nhật localStorage
+                const userStr = localStorage.getItem('user');
+                const user = JSON.parse(userStr);
+                user.email = email;
+                user.fullName = fullName;
+                localStorage.setItem('user', JSON.stringify(user));
+
+                // Cập nhật hiển thị tên
+                document.getElementById('userName').textContent = fullName || user.username;
+
+                alert('Cập nhật profile thành công!');
+                closeUserProfile();
+            } else {
+                alert('Lỗi cập nhật profile: ' + (data.message || 'Không xác định'));
+            }
+        } else {
+            alert('Lỗi kết nối server khi cập nhật profile');
+        }
+    } catch (error) {
+        console.error('Error updating profile:', error);
+        alert('Lỗi cập nhật profile: ' + error.message);
+    }
+}
+
+/**
+ * Đổi mật khẩu user
+ */
+async function changeUserPassword() {
+    try {
+        const currentPassword = document.getElementById('userCurrentPassword').value;
+        const newPassword = document.getElementById('userNewPassword').value;
+        const confirmPassword = document.getElementById('userConfirmPassword').value;
+
+        // Validation
+        if (!currentPassword || !newPassword || !confirmPassword) {
+            alert('Vui lòng điền đầy đủ thông tin mật khẩu!');
+            return;
+        }
+
+        if (newPassword !== confirmPassword) {
+            alert('Mật khẩu mới và xác nhận mật khẩu không khớp!');
+            return;
+        }
+
+        if (newPassword.length < 6) {
+            alert('Mật khẩu mới phải có ít nhất 6 ký tự!');
+            return;
+        }
+
+        const token = localStorage.getItem('token');
+        if (!token) {
+            alert('Phiên đăng nhập đã hết hạn!');
+            window.location.href = 'auth.html';
+            return;
+        }
+
+        const response = await fetch('http://localhost:9000/api/auth/change-password', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                currentPassword: currentPassword,
+                newPassword: newPassword
+            })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success) {
+                alert('Đổi mật khẩu thành công!');
+                // Clear password fields
+                document.getElementById('userCurrentPassword').value = '';
+                document.getElementById('userNewPassword').value = '';
+                document.getElementById('userConfirmPassword').value = '';
+            } else {
+                alert('Lỗi đổi mật khẩu: ' + (data.message || 'Không xác định'));
+            }
+        } else {
+            alert('Lỗi kết nối server khi đổi mật khẩu');
+        }
+    } catch (error) {
+        console.error('Error changing password:', error);
+        alert('Lỗi đổi mật khẩu: ' + error.message);
+    }
+}
+
 // ===== KHỞI TẠO ỨNG DỤNG =====
 let chatApp;
 document.addEventListener('DOMContentLoaded', () => {
     // Khởi tạo chatbot khi DOM đã load xong
     chatApp = new HCMChatApp();
+
+    // Setup modal click outside to close
+    const profileModal = document.getElementById('profileModal');
+    profileModal.addEventListener('click', (e) => {
+        if (e.target === profileModal) {
+            closeUserProfile();
+        }
+    });
 });
 
 // ===== DYNAMIC CSS =====

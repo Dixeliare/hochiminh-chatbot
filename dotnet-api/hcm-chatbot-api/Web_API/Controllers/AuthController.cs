@@ -158,4 +158,90 @@ public class AuthController : BaseController
             return ErrorResponse($"Failed to get user information: {ex.Message}", 500);
         }
     }
+
+    /// <summary>
+    /// API cập nhật thông tin profile của user hiện tại
+    /// Chỉ cập nhật những field được cung cấp trong request body
+    /// </summary>
+    [HttpPut("profile")]
+    [Authorize]
+    public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileRequest request)
+    {
+        try
+        {
+            var username = User.Identity?.Name;
+            if (string.IsNullOrEmpty(username))
+                return ErrorResponse("User not authenticated", 401);
+
+            var updatedUser = await _authService.UpdateUserProfileAsync(
+                username,
+                request.Email,
+                request.FullName,
+                request.AvatarUrl
+            );
+
+            var userDto = new UserDto
+            {
+                Id = updatedUser.id,
+                Username = updatedUser.username,
+                Email = updatedUser.email,
+                FullName = updatedUser.full_name,
+                AvatarUrl = updatedUser.avatar_url,
+                Role = updatedUser.role ?? "user",
+                Status = updatedUser.status ?? "enable",
+                TotalMessages = updatedUser.total_messages ?? 0,
+                TotalConversations = updatedUser.total_conversations ?? 0,
+                CreatedAt = updatedUser.created_at ?? DateTime.UtcNow
+            };
+
+            return SuccessResponse(userDto, "Profile updated successfully");
+        }
+        catch (InvalidOperationException ex)
+        {
+            return ErrorResponse(ex.Message, 400);
+        }
+        catch (Exception ex)
+        {
+            return ErrorResponse($"Failed to update profile: {ex.Message}", 500);
+        }
+    }
+
+    /// <summary>
+    /// API đổi mật khẩu của user hiện tại
+    /// Yêu cầu xác thực mật khẩu cũ trước khi cập nhật
+    /// </summary>
+    [HttpPost("change-password")]
+    [Authorize]
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
+    {
+        try
+        {
+            var username = User.Identity?.Name;
+            if (string.IsNullOrEmpty(username))
+                return ErrorResponse("User not authenticated", 401);
+
+            var success = await _authService.ChangePasswordAsync(
+                username,
+                request.CurrentPassword,
+                request.NewPassword
+            );
+
+            if (success)
+                return SuccessResponse(new { Success = true }, "Password changed successfully");
+            else
+                return ErrorResponse("Failed to change password", 500);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return ErrorResponse(ex.Message, 400);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return ErrorResponse(ex.Message, 400);
+        }
+        catch (Exception ex)
+        {
+            return ErrorResponse($"Failed to change password: {ex.Message}", 500);
+        }
+    }
 }

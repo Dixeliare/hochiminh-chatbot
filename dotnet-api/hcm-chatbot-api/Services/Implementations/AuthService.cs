@@ -137,4 +137,66 @@ public class AuthService : IAuthService
         var token = tokenHandler.CreateToken(tokenDescriptor);
         return tokenHandler.WriteToken(token);
     }
+
+    /// <summary>
+    /// Cập nhật thông tin profile của user
+    /// Chỉ cập nhật những field được cung cấp (không null)
+    /// </summary>
+    public async Task<user> UpdateUserProfileAsync(string username, string? email = null, string? fullName = null, string? avatarUrl = null)
+    {
+        var user = await GetUserByUsernameAsync(username);
+        if (user == null)
+            throw new InvalidOperationException("User not found");
+
+        // Kiểm tra email mới có trùng với user khác không
+        if (!string.IsNullOrEmpty(email) && email != user.email)
+        {
+            var existingEmailUser = await GetUserByEmailAsync(email);
+            if (existingEmailUser != null && existingEmailUser.id != user.id)
+                throw new InvalidOperationException("Email already exists");
+        }
+
+        // Cập nhật chỉ những field được cung cấp
+        if (!string.IsNullOrEmpty(email))
+            user.email = email;
+
+        if (fullName != null) // Cho phép set empty string
+            user.full_name = fullName;
+
+        if (avatarUrl != null) // Cho phép set empty string
+            user.avatar_url = avatarUrl;
+
+        user.updated_at = DateTime.UtcNow;
+
+        await _userRepository.UpdateAsync(user);
+        await _unitOfWork.CompleteAsync();
+
+        return user;
+    }
+
+    /// <summary>
+    /// Đổi mật khẩu user
+    /// Xác thực mật khẩu cũ trước khi cập nhật
+    /// </summary>
+    public async Task<bool> ChangePasswordAsync(string username, string currentPassword, string newPassword)
+    {
+        var user = await GetUserByUsernameAsync(username);
+        if (user == null)
+            throw new InvalidOperationException("User not found");
+
+        // Xác thực mật khẩu hiện tại
+        if (!BCrypt.Net.BCrypt.Verify(currentPassword, user.password_hash))
+            throw new UnauthorizedAccessException("Current password is incorrect");
+
+        // Hash mật khẩu mới
+        var hashedNewPassword = BCrypt.Net.BCrypt.HashPassword(newPassword);
+
+        user.password_hash = hashedNewPassword;
+        user.updated_at = DateTime.UtcNow;
+
+        await _userRepository.UpdateAsync(user);
+        await _unitOfWork.CompleteAsync();
+
+        return true;
+    }
 }

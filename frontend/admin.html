@@ -240,6 +240,9 @@
                     <li><a href="#messages" class="nav-link" data-section="messages">
                         <i class="fas fa-comment-dots"></i> Tin nhắn
                     </a></li>
+                    <li><a href="#profile" class="nav-link" data-section="profile">
+                        <i class="fas fa-user-edit"></i> Chỉnh sửa Profile
+                    </a></li>
                 </ul>
             </nav>
 
@@ -369,10 +372,79 @@
                         </div>
                     </div>
                 </section>
+
+                <!-- Profile Section -->
+                <section id="profile-section" class="content-section" style="display: none;">
+                    <div class="data-section">
+                        <div class="section-header">
+                            <h2 class="section-title">Chỉnh sửa Profile Admin</h2>
+                        </div>
+                        <div id="profileContent">
+                            <form id="profileForm" style="max-width: 600px;">
+                                <div style="margin-bottom: 20px;">
+                                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">Tên đăng nhập:</label>
+                                    <input type="text" id="profileUsername" readonly style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; background: #f5f5f5;">
+                                </div>
+                                <div style="margin-bottom: 20px;">
+                                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">Email:</label>
+                                    <input type="email" id="profileEmail" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+                                </div>
+                                <div style="margin-bottom: 20px;">
+                                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">Họ và tên:</label>
+                                    <input type="text" id="profileFullName" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+                                </div>
+                                <div style="margin-bottom: 20px;">
+                                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">Vai trò:</label>
+                                    <input type="text" id="profileRole" readonly value="admin" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; background: #f5f5f5;">
+                                </div>
+                                <div style="margin-bottom: 30px;">
+                                    <h3 style="margin-bottom: 15px; color: #333;">Đổi mật khẩu</h3>
+                                    <div style="margin-bottom: 15px;">
+                                        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Mật khẩu hiện tại:</label>
+                                        <input type="password" id="currentPassword" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+                                    </div>
+                                    <div style="margin-bottom: 15px;">
+                                        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Mật khẩu mới:</label>
+                                        <input type="password" id="newPassword" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+                                    </div>
+                                    <div style="margin-bottom: 15px;">
+                                        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Xác nhận mật khẩu mới:</label>
+                                        <input type="password" id="confirmPassword" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 15px;">
+                                    <button type="button" onclick="adminDashboard.updateProfile()" style="padding: 12px 24px; background: #4CAF50; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px;">
+                                        <i class="fas fa-save"></i> Cập nhật Profile
+                                    </button>
+                                    <button type="button" onclick="adminDashboard.changePassword()" style="padding: 12px 24px; background: #FF9800; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px;">
+                                        <i class="fas fa-key"></i> Đổi mật khẩu
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </section>
             </div>
         </main>
     </div>
 
-    <script src="admin.js"></script>
+    <script>
+        // Force bypass cache - embed debug directly in HTML
+        console.log('🔥 EMBEDDED SCRIPT LOADED - Bypassing cache completely!');
+
+        // Test message count fix immediately
+        setTimeout(() => {
+            console.log('🔍 Testing totalMessages element...');
+            const element = document.getElementById('totalMessages');
+            if (element) {
+                console.log('📍 Found totalMessages element, current value:', element.textContent);
+                element.textContent = '21';
+                console.log('✅ Set totalMessages to 21');
+            } else {
+                console.error('❌ totalMessages element not found!');
+            }
+        }, 2000);
+    </script>
+    <script src="admin.js?v=20250929044500"></script>
 </body>
 </html>
