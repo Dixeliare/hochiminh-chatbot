@@ -1,0 +1,94 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: hcm-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: hcm_chatbot_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres123}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database_schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - hcm-network
+
+  # .NET Web API
+  dotnet-api:
+    build:
+      context: .
+      dockerfile: Dockerfile.dotnet
+    container_name: hcm-dotnet-api
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=hcm_chatbot_db;Username=postgres;Password=${POSTGRES_PASSWORD:-postgres123}
+      - JwtSettings__SecretKey=${JWT_SECRET_KEY:-your-super-secret-jwt-key-change-this-in-production-minimum-32-chars}
+      - JwtSettings__Issuer=HCMChatbotAPI
+      - JwtSettings__Audience=HCMChatbotClient
+      - JwtSettings__ExpirationMinutes=1440
+      - AiService__BaseUrl=http://python-ai:8000
+      - Cors__AllowedOrigins__0=http://localhost
+      - Cors__AllowedOrigins__1=http://localhost:80
+      - Cors__AllowedOrigins__2=${FRONTEND_URL:-http://localhost}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      python-ai:
+        condition: service_healthy
+    networks:
+      - hcm-network
+
+  # Python AI Backend
+  python-ai:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: hcm-python-ai
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - hcm-network
+
+  # Frontend (Nginx)
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: hcm-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - dotnet-api
+    networks:
+      - hcm-network
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  hcm-network:
+    driver: bridge

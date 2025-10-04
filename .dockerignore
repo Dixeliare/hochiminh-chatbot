@@ -1,0 +1,61 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Documentation
+*.md
+!README.md
+QUICKSTART.md
+SETUP_GUIDE.md
+WINDOWS_SETUP.md
+DEPLOYMENT.md
+
+# IDE
+.vscode
+.idea
+.DS_Store
+*.swp
+*.swo
+
+# Logs
+logs/
+*.log
+
+# Backend
+backend/venv/
+backend/__pycache__/
+backend/**/__pycache__/
+backend/.env
+backend/*.pyc
+backend/.pytest_cache/
+
+# .NET
+dotnet-api/**/bin/
+dotnet-api/**/obj/
+dotnet-api/**/.vs/
+dotnet-api/**/appsettings.Development.json
+*.user
+
+# Node modules (if any)
+node_modules/
+npm-debug.log
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# OS files
+Thumbs.db
+.DS_Store

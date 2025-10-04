@@ -189,3 +189,8 @@ using (var scope = app.Services.CreateScope())
 
 // ===== KHỞI CHẠY ỨNG DỤNG =====
 app.Run();
+
+
+
+
+// "Host=localhost;Port=5432;Database=hcm_chatbot_db;Username=postgres;Password=041203"

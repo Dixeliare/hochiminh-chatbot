@@ -444,6 +444,17 @@ open http://localhost:3000/welcome.html
 - `./start-all.sh` - Khởi động toàn bộ
 - `./stop-all.sh` - Dừng toàn bộ
 - `./status.sh` - Kiểm tra trạng thái
-- `SETUP_GUIDE.md` - Hướng dẫn chi tiết
+- `./deploy.sh` - Deploy production với Docker
+
+**📚 Documentation:**
+- [SETUP_GUIDE.md](SETUP_GUIDE.md) - Hướng dẫn setup chi tiết
+- [WINDOWS_SETUP.md](WINDOWS_SETUP.md) - Hướng dẫn cho Windows
+- [DEPLOYMENT.md](DEPLOYMENT.md) - Hướng dẫn deploy production
+
+**🚀 Production Deployment:**
+- Docker Compose support
+- VPS deployment ready
+- Cloud platform compatible (Railway, AWS, GCP)
+- SSL/HTTPS ready
 
 *"Không có gì quý hơn độc lập tự do"* - Hồ Chí Minh
