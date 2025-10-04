@@ -70,24 +70,40 @@ hcm-chatbot/
 
 ## 🚀 Cài đặt và chạy hệ thống
 
+> **🪟 Dùng Windows?** Xem hướng dẫn chi tiết tại: [WINDOWS_SETUP.md](WINDOWS_SETUP.md)
+
 ### ⚡ Khởi động nhanh
 
-**Chỉ cần 1 lệnh để chạy toàn bộ hệ thống:**
+**🍎 macOS / 🐧 Linux:**
 
 ```bash
 ./start-all.sh
 ```
 
+**🪟 Windows (PowerShell):**
+
+```powershell
+.\start-all.ps1
+```
+
 **Dừng hệ thống:**
 
 ```bash
+# macOS / Linux
 ./stop-all.sh
+
+# Windows
+.\stop-all.ps1
 ```
 
 **Kiểm tra trạng thái:**
 
 ```bash
+# macOS / Linux
 ./status.sh
+
+# Windows
+.\status.ps1
 ```
 
 ### 📋 Yêu cầu hệ thống
@@ -97,6 +113,7 @@ hcm-chatbot/
 - **Python** 3.8+
 - **Git**
 - **API Keys**: Gemini AI (cho Python AI backend)
+- **🪟 Windows**: PowerShell 5.1+ (có sẵn)
 
 ### 🗄️ Cài đặt PostgreSQL
 
@@ -108,12 +125,15 @@ brew services start postgresql
 # Ubuntu/Debian
 sudo apt-get install postgresql-16
 
-# Windows
-# Download từ https://www.postgresql.org/download/
+# Windows PowerShell (as Administrator)
+# Download từ https://www.postgresql.org/download/windows/
+# Sau khi cài, start service:
+net start postgresql-x64-16
 ```
 
 ### 1️⃣ Clone và Setup
 
+**macOS / Linux:**
 ```bash
 git clone <repository-url>
 cd hcm-chatbot
@@ -122,10 +142,20 @@ cd hcm-chatbot
 chmod +x *.sh
 ```
 
+**Windows PowerShell:**
+```powershell
+git clone <repository-url>
+cd hcm-chatbot
+
+# Cho phép chạy PowerShell scripts (chạy 1 lần)
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
 ### 2️⃣ Cấu hình Backend AI (tùy chọn)
 
 Nếu muốn sử dụng AI, cần setup Gemini API:
 
+**macOS / Linux:**
 ```bash
 # Tạo file .env trong backend/
 cd backend
@@ -135,11 +165,22 @@ cp .env.example .env
 echo "GEMINI_API_KEY=your_api_key_here" >> .env
 ```
 
+**Windows PowerShell:**
+```powershell
+# Tạo file .env trong backend/
+cd backend
+Copy-Item .env.example .env
+
+# Mở file để edit
+notepad .env
+# Thêm: GEMINI_API_KEY=your_api_key_here
+```
+
 **Lấy Gemini API Key tại:** https://ai.google.dev/
 
 ## 🌐 Truy cập hệ thống
 
-Sau khi chạy `./start-all.sh`, truy cập:
+Sau khi chạy `./start-all.sh` (macOS/Linux) hoặc `.\start-all.ps1` (Windows), truy cập:
 
 - **🌐 Frontend**: http://localhost:3000/welcome.html
 - **🔗 .NET API**: http://localhost:9000/swagger
@@ -226,6 +267,7 @@ curl -X POST "http://localhost:9000/api/auth/login" \
 
 ### Development Mode
 
+**macOS / Linux:**
 ```bash
 # .NET API với hot reload
 cd dotnet-api/hcm-chatbot-api
@@ -241,18 +283,43 @@ cd frontend
 python3 -m http.server 3000
 ```
 
+**Windows PowerShell:**
+```powershell
+# .NET API với hot reload
+cd dotnet-api\hcm-chatbot-api
+dotnet watch --project Web_API\Web_API.csproj
+
+# Python AI với auto-reload
+cd backend
+.\venv\Scripts\activate
+python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+
+# Frontend với live server
+cd frontend
+python -m http.server 3000
+```
+
 ## 🔧 Troubleshooting
+
+> **🪟 Windows users:** Xem troubleshooting chi tiết tại [WINDOWS_SETUP.md](WINDOWS_SETUP.md#-troubleshooting)
 
 ### Lỗi thường gặp
 
 #### 1. PostgreSQL không chạy
-```bash
-# Kiểm tra PostgreSQL
-pg_isready -h localhost -p 5432
 
-# Khởi động PostgreSQL
-brew services start postgresql  # macOS
-sudo systemctl start postgresql  # Linux
+**macOS:**
+```bash
+brew services start postgresql
+```
+
+**Linux:**
+```bash
+sudo systemctl start postgresql
+```
+
+**Windows:**
+```powershell
+net start postgresql-x64-16
 ```
 
 #### 2. .NET API lỗi build
@@ -266,30 +333,59 @@ dotnet restore
 ```
 
 #### 3. Python AI không khởi động
+
+**macOS / Linux:**
 ```bash
-# Kiểm tra virtual environment
 cd backend
 source venv/bin/activate
 pip install -r requirements.txt
 ```
 
+**Windows:**
+```powershell
+cd backend
+.\venv\Scripts\activate
+pip install -r requirements.txt
+```
+
 #### 4. Port đã được sử dụng
+
+**macOS / Linux:**
 ```bash
 # Kiểm tra ports
 lsof -i :3000  # Frontend
-lsof -i :5000  # .NET API
+lsof -i :9000  # .NET API
 lsof -i :8000  # Python AI
 
 # Kill processes
 ./stop-all.sh
 ```
 
+**Windows:**
+```powershell
+# Kiểm tra ports
+Get-NetTCPConnection -LocalPort 3000
+Get-NetTCPConnection -LocalPort 9000
+Get-NetTCPConnection -LocalPort 8000
+
+# Kill processes
+.\stop-all.ps1
+```
+
 ### Logs
+
+**macOS / Linux:**
 ```bash
-# Xem logs
 tail -f logs/dotnet-api.log
 tail -f logs/python-ai.log
 tail -f logs/frontend.log
+```
+
+**Windows:**
+```powershell
+Get-Content logs\dotnet-api.log -Tail 50
+Get-Content logs\python-ai.log -Tail 50
+Get-Content logs\frontend.log -Tail 50
 ```
 
 ## 📊 Database Schema
