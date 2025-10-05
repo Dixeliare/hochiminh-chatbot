@@ -6,14 +6,20 @@ using Services.Interfaces;
 
 namespace Web_API;
 
+/// <summary>
+/// UsersController - Quản lý users, upload avatar, update profile
+/// </summary>
+
 [Authorize]
 public class UsersController : BaseController
 {
     private readonly IUserService _userService;
+    private readonly ICloudinaryService _cloudinaryService;
 
-    public UsersController(IUserService userService)
+    public UsersController(IUserService userService, ICloudinaryService cloudinaryService)
     {
         _userService = userService;
+        _cloudinaryService = cloudinaryService;
     }
 
     [HttpGet]
@@ -186,6 +192,94 @@ public class UsersController : BaseController
         }
     }
 
+    /// <summary>
+    /// Upload avatar cho user lên Cloudinary
+    /// Chấp nhận file ảnh: jpg, jpeg, png, gif, webp (max 5MB)
+    /// </summary>
+    [HttpPost("{id}/upload-avatar")]
+    public async Task<IActionResult> UploadAvatar(Guid id, IFormFile avatar)
+    {
+        try
+        {
+            var currentUserId = GetCurrentUserId();
+            var isAdmin = IsAdmin();
+
+            // Chỉ cho phép user tự upload hoặc admin
+            if (id != currentUserId && !isAdmin)
+                return ErrorResponse("Access denied", 403);
+
+            // Validate file
+            if (avatar == null || avatar.Length == 0)
+                return ErrorResponse("No file uploaded", 400);
+
+            // Get user
+            var user = await _userService.GetUserByIdAsync(id);
+            if (user == null)
+                return ErrorResponse("User not found", 404);
+
+            // Upload lên Cloudinary
+            var cloudinaryUrl = await _cloudinaryService.UploadImageAsync(avatar, "hcm-chatbot/avatars");
+
+            // Xóa avatar cũ trên Cloudinary (nếu có)
+            if (!string.IsNullOrEmpty(user.avatar_url) && user.avatar_url.Contains("cloudinary.com"))
+            {
+                var oldPublicId = _cloudinaryService.GetPublicIdFromUrl(user.avatar_url);
+                await _cloudinaryService.DeleteImageAsync(oldPublicId);
+            }
+
+            // Update user avatar_url
+            user.avatar_url = cloudinaryUrl;
+            await _userService.UpdateUserAsync(user);
+
+            var response = new UploadAvatarResponse { AvatarUrl = cloudinaryUrl };
+            return SuccessResponse(response, "Avatar uploaded successfully to Cloudinary");
+        }
+        catch (ArgumentException ex)
+        {
+            return ErrorResponse(ex.Message, 400);
+        }
+        catch (Exception ex)
+        {
+            return ErrorResponse($"Failed to upload avatar: {ex.Message}", 500);
+        }
+    }
+
+    /// <summary>
+    /// Xóa avatar của user trên Cloudinary
+    /// </summary>
+    [HttpDelete("{id}/avatar")]
+    public async Task<IActionResult> DeleteAvatar(Guid id)
+    {
+        try
+        {
+            var currentUserId = GetCurrentUserId();
+            var isAdmin = IsAdmin();
+
+            if (id != currentUserId && !isAdmin)
+                return ErrorResponse("Access denied", 403);
+
+            var user = await _userService.GetUserByIdAsync(id);
+            if (user == null)
+                return ErrorResponse("User not found", 404);
+
+            // Xóa avatar trên Cloudinary
+            if (!string.IsNullOrEmpty(user.avatar_url) && user.avatar_url.Contains("cloudinary.com"))
+            {
+                var publicId = _cloudinaryService.GetPublicIdFromUrl(user.avatar_url);
+                await _cloudinaryService.DeleteImageAsync(publicId);
+            }
+
+            user.avatar_url = null;
+            await _userService.UpdateUserAsync(user);
+
+            return SuccessResponse<object>(null, "Avatar deleted successfully from Cloudinary");
+        }
+        catch (Exception ex)
+        {
+            return ErrorResponse($"Failed to delete avatar: {ex.Message}", 500);
+        }
+    }
+
     [HttpGet("role/{role}")]
     [Authorize(Roles = "admin")]
     public async Task<IActionResult> GetUsersByRole(string role)
@@ -215,12 +309,38 @@ public class UsersController : BaseController
             return ErrorResponse($"Failed to retrieve users by role: {ex.Message}", 500);
         }
     }
-}
 
-public class UpdateUserRequest
-{
-    public string? FullName { get; set; }
-    public string? AvatarUrl { get; set; }
-    public string? Role { get; set; }
-    public string? Status { get; set; }
+    /// <summary>
+    /// Đổi mật khẩu cho user
+    /// </summary>
+    [HttpPut("{id}/change-password")]
+    public async Task<IActionResult> ChangePassword(Guid id, [FromBody] ChangePasswordRequest request)
+    {
+        try
+        {
+            var currentUserId = GetCurrentUserId();
+            
+            // Chỉ cho phép user tự đổi mật khẩu của mình
+            if (id != currentUserId)
+                return ErrorResponse("Access denied", 403);
+
+            var user = await _userService.GetUserByIdAsync(id);
+            if (user == null)
+                return ErrorResponse("User not found", 404);
+
+            // Verify current password
+            if (!BCrypt.Net.BCrypt.Verify(request.CurrentPassword, user.password_hash))
+                return ErrorResponse("Current password is incorrect", 400);
+
+            // Update password
+            user.password_hash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+            await _userService.UpdateUserAsync(user);
+
+            return SuccessResponse<object>(null, "Password changed successfully");
+        }
+        catch (Exception ex)
+        {
+            return ErrorResponse($"Failed to change password: {ex.Message}", 500);
+        }
+    }
 }

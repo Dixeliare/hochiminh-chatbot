@@ -52,6 +52,38 @@
             align-items: center;
             justify-content: center;
             font-size: 1.2rem;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(255,255,255,0.3);
+        }
+
+        .user-avatar div {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .user-avatar div:hover {
+            transform: scale(1.05);
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .user-details h3 {
@@ -214,6 +246,184 @@
             gap: 15px;
             justify-content: flex-end;
             margin-top: 30px;
+        }
+
+        /* Avatar Section in Modal */
+        .avatar-section-modal {
+            text-align: center;
+            margin-bottom: 25px;
+            padding: 20px 0;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .avatar-container-modal {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .avatar-preview-modal {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #667eea;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            margin: 0 auto;
+            transition: all 0.3s ease;
+        }
+
+        .avatar-preview-modal:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .avatar-preview-modal img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .avatar-upload-btn-modal {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: #667eea;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            border: 3px solid white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .avatar-upload-btn-modal:hover {
+            background: #5568d3;
+            transform: scale(1.1);
+        }
+
+        #modalAvatarInput {
+            display: none;
+        }
+
+        .avatar-actions-modal {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .btn-delete-avatar-modal {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 16px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+            opacity: 0;
+            animation: fadeIn 0.3s ease forwards;
+            animation-delay: 0.2s;
+        }
+
+        .btn-delete-avatar-modal:hover {
+            background: #d32f2f;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
+        }
+
+        .upload-progress-modal {
+            width: 200px;
+            height: 3px;
+            background: #e0e0e0;
+            border-radius: 2px;
+            margin: 10px auto 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .upload-progress-modal.active {
+            opacity: 1;
+        }
+
+        .upload-progress-bar-modal {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s ease;
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200px 0; }
+            100% { background-position: 200px 0; }
+        }
+
+        .password-section {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 2px solid #f0f0f0;
+        }
+
+        .password-section h3 {
+            color: #da020e;
+            font-size: 18px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .profile-btn-primary {
+            background: linear-gradient(135deg, #da020e, #ff6b6b);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .profile-btn-primary:hover {
+            background: linear-gradient(135deg, #b8000c, #e55555);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(218, 2, 14, 0.3);
+        }
+
+        .profile-btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .profile-btn-secondary:hover {
+            background: #e0e0e0;
+            transform: translateY(-2px);
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
         }
 
         .profile-btn-primary {
@@ -715,7 +925,7 @@
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <div class="user-info">
-                <div class="user-avatar">
+                <div class="user-avatar" id="userAvatar" onclick="openUserProfile()" title="Click để chỉnh sửa profile">
                     <i class="fas fa-user"></i>
                 </div>
                 <div class="user-details">
@@ -812,15 +1022,37 @@
         </div>
     </div>
 
-    <!-- Profile Modal -->
-    <div id="profileModal" class="profile-modal">
+    <!-- Profile Edit Modal -->
+    <div class="profile-modal" id="profileModal">
         <div class="profile-modal-content">
             <div class="profile-modal-header">
-                <h2><i class="fas fa-user-edit"></i> Chỉnh sửa Profile</h2>
-                <button class="close-btn" onclick="closeUserProfile()">&times;</button>
+                <h2>👤 Chỉnh sửa Profile</h2>
+                <button class="close-btn" onclick="closeProfileModal()">&times;</button>
             </div>
 
-            <form id="userProfileForm">
+            <!-- Avatar Section -->
+            <div class="avatar-section-modal">
+                <div class="avatar-container-modal">
+                    <div class="avatar-preview-modal" id="modalAvatarPreview">
+                        <span id="modalAvatarInitial">?</span>
+                    </div>
+                    <label for="modalAvatarInput" class="avatar-upload-btn-modal" title="Upload avatar">
+                        📷
+                    </label>
+                    <input type="file" id="modalAvatarInput" accept="image/jpeg,image/jpg,image/png,image/gif,image/webp">
+                </div>
+                <div class="upload-progress-modal" id="modalUploadProgress">
+                    <div class="upload-progress-bar-modal" id="modalUploadProgressBar"></div>
+                </div>
+                <div class="avatar-actions-modal">
+                    <button class="btn-delete-avatar-modal" id="modalDeleteAvatarBtn" style="display: none;">
+                        🗑️ Xóa avatar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Profile Form -->
+            <form id="profileFormModal">
                 <div class="profile-form-group">
                     <label for="profileUsername">Tên đăng nhập:</label>
                     <input type="text" id="profileUsername" readonly>
@@ -828,12 +1060,12 @@
 
                 <div class="profile-form-group">
                     <label for="profileEmail">Email:</label>
-                    <input type="email" id="profileEmail" required>
+                    <input type="email" id="profileEmail" readonly>
                 </div>
 
                 <div class="profile-form-group">
                     <label for="profileFullName">Họ và tên:</label>
-                    <input type="text" id="profileFullName" required>
+                    <input type="text" id="profileFullName" placeholder="Nhập họ và tên">
                 </div>
 
                 <div class="profile-form-group">
@@ -841,40 +1073,40 @@
                     <input type="text" id="profileRole" readonly>
                 </div>
 
-                <div style="border-top: 2px solid #f0f0f0; padding-top: 20px; margin-top: 20px;">
-                    <h3 style="margin-bottom: 15px; color: #333;">Đổi mật khẩu</h3>
-
+                <!-- Password Change Section -->
+                <div class="password-section">
+                    <h3>🔒 Đổi mật khẩu</h3>
                     <div class="profile-form-group">
                         <label for="userCurrentPassword">Mật khẩu hiện tại:</label>
-                        <input type="password" id="userCurrentPassword">
+                        <input type="password" id="userCurrentPassword" placeholder="Nhập mật khẩu hiện tại">
                     </div>
-
                     <div class="profile-form-group">
                         <label for="userNewPassword">Mật khẩu mới:</label>
-                        <input type="password" id="userNewPassword">
+                        <input type="password" id="userNewPassword" placeholder="Nhập mật khẩu mới">
                     </div>
-
                     <div class="profile-form-group">
                         <label for="userConfirmPassword">Xác nhận mật khẩu mới:</label>
-                        <input type="password" id="userConfirmPassword">
+                        <input type="password" id="userConfirmPassword" placeholder="Xác nhận mật khẩu mới">
                     </div>
                 </div>
 
                 <div class="profile-buttons">
-                    <button type="button" class="profile-btn-secondary" onclick="closeUserProfile()">Hủy</button>
-                    <button type="button" class="profile-btn-primary" onclick="updateUserProfile()">Cập nhật Profile</button>
-                    <button type="button" class="profile-btn-primary" onclick="changeUserPassword()">Đổi mật khẩu</button>
+                    <button type="button" class="profile-btn-secondary" onclick="closeProfileModal()">
+                        Hủy
+                    </button>
+                    <button type="button" class="profile-btn-secondary" onclick="changePasswordModal()">
+                        🔒 Đổi mật khẩu
+                    </button>
+                    <button type="submit" class="profile-btn-primary">
+                        ✅ Cập nhật Profile
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 
     <script>
-        // Profile functionality - Embedded to bypass cache issues
-
-        // ===== EMBEDDED PROFILE FUNCTIONS =====
-        // Bypass cache issues by embedding directly in HTML
-
+        // Profile Modal Functions
         function openUserProfile() {
             const modal = document.getElementById('profileModal');
 
@@ -899,7 +1131,10 @@
                 document.getElementById('userNewPassword').value = '';
                 document.getElementById('userConfirmPassword').value = '';
 
-                // Hiển thị modal
+                // Update avatar display
+                updateModalAvatar(user.avatarUrl, user.fullName || user.username);
+
+                // Show modal
                 modal.style.display = 'block';
             } catch (error) {
                 console.error('Error parsing user data:', error);
@@ -907,138 +1142,305 @@
             }
         }
 
-        function closeUserProfile() {
-            const modal = document.getElementById('profileModal');
-            modal.style.display = 'none';
+        function closeProfileModal() {
+            document.getElementById('profileModal').style.display = 'none';
         }
 
-        async function updateUserProfile() {
-            try {
-                // Lấy dữ liệu từ form
-                const email = document.getElementById('profileEmail').value.trim();
-                const fullName = document.getElementById('profileFullName').value.trim();
+        function updateModalAvatar(avatarUrl, name) {
+            const avatarPreview = document.getElementById('modalAvatarPreview');
+            const deleteBtn = document.getElementById('modalDeleteAvatarBtn');
 
-                // Validation cơ bản
-                if (!email || !fullName) {
-                    alert('Vui lòng điền đầy đủ thông tin!');
-                    return;
+            if (avatarUrl && avatarUrl.trim() !== '') {
+                // Check if Cloudinary URL or local URL
+                let imageUrl = avatarUrl;
+                if (!avatarUrl.startsWith('http')) {
+                    // Local URL - prepend API base
+                    imageUrl = `http://localhost:9000${avatarUrl}`;
                 }
 
-                // Lấy token từ localStorage
-                const token = localStorage.getItem('token');
-                if (!token) {
-                    alert('Không tìm thấy token. Vui lòng đăng nhập lại!');
-                    return;
-                }
-
-                // Gọi API cập nhật profile
-                const response = await fetch('http://localhost:9000/api/auth/profile', {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + token
-                    },
-                    body: JSON.stringify({
-                        email: email,
-                        fullName: fullName
-                    })
-                });
-
-                const result = await response.json();
-
-                if (result.success) {
-                    // Cập nhật localStorage với thông tin mới
-                    const updatedUser = result.data;
-                    localStorage.setItem('user', JSON.stringify(updatedUser));
-
-                    // Cập nhật UI
-                    document.getElementById('username').textContent = updatedUser.fullName || updatedUser.username;
-
-                    alert('Cập nhật profile thành công!');
-                    closeUserProfile();
-                } else {
-                    alert('Lỗi: ' + result.message);
-                }
-            } catch (error) {
-                console.error('Error updating profile:', error);
-                alert('Lỗi khi cập nhật profile. Vui lòng thử lại!');
+                // Show image avatar with error handling
+                const img = document.createElement('img');
+                img.src = imageUrl;
+                img.alt = 'Avatar';
+                img.style.width = '100%';
+                img.style.height = '100%';
+                img.style.objectFit = 'cover';
+                img.style.borderRadius = '50%';
+                
+                img.onerror = () => {
+                    showModalAvatarFallback(name);
+                };
+                
+                img.onload = () => {
+                    avatarPreview.innerHTML = '';
+                    avatarPreview.appendChild(img);
+                    deleteBtn.style.display = 'inline-block';
+                };
+            } else {
+                // Show initial letter
+                showModalAvatarFallback(name);
+                deleteBtn.style.display = 'none';
             }
         }
 
-        async function changeUserPassword() {
-            try {
-                // Lấy dữ liệu từ form
-                const currentPassword = document.getElementById('userCurrentPassword').value;
-                const newPassword = document.getElementById('userNewPassword').value;
-                const confirmPassword = document.getElementById('userConfirmPassword').value;
+        function showModalAvatarFallback(name) {
+            const avatarPreview = document.getElementById('modalAvatarPreview');
+            
+            // Lấy chữ cái đầu từ tên
+            const displayName = name || 'User';
+            const initial = displayName.charAt(0).toUpperCase();
+            
+            // Tạo gradient background dựa trên chữ cái (same as sidebar)
+            const colors = [
+                'linear-gradient(135deg, #667eea, #764ba2)',  // A-B
+                'linear-gradient(135deg, #f093fb, #f5576c)',  // C-D
+                'linear-gradient(135deg, #4facfe, #00f2fe)',  // E-F
+                'linear-gradient(135deg, #43e97b, #38f9d7)',  // G-H
+                'linear-gradient(135deg, #fa709a, #fee140)',  // I-J
+                'linear-gradient(135deg, #a8edea, #fed6e3)',  // K-L
+                'linear-gradient(135deg, #ff9a9e, #fecfef)',  // M-N
+                'linear-gradient(135deg, #ffc3a0, #ffafbd)',  // O-P
+                'linear-gradient(135deg, #d299c2, #fef9d7)', // Q-R
+                'linear-gradient(135deg, #89f7fe, #66a6ff)',  // S-T
+                'linear-gradient(135deg, #fdbb2d, #22c1c3)',  // U-V
+                'linear-gradient(135deg, #fad0c4, #ffd1ff)',  // W-X
+                'linear-gradient(135deg, #ff8a80, #ea384d)',  // Y-Z
+            ];
+            
+            const colorIndex = (initial.charCodeAt(0) - 65) % colors.length;
+            const gradient = colors[colorIndex];
+            
+            avatarPreview.innerHTML = `<div style="width: 100%; height: 100%; border-radius: 50%; background: ${gradient}; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 40px;">${initial}</div>`;
+        }
 
-                // Validation
-                if (!currentPassword || !newPassword || !confirmPassword) {
-                    alert('Vui lòng điền đầy đủ thông tin mật khẩu!');
-                    return;
+        // Avatar Upload Functions for Modal
+        function handleModalAvatarUpload(file) {
+            if (!file) return;
+
+            // Validate file
+            const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+            if (!validTypes.includes(file.type)) {
+                alert('Chỉ chấp nhận file ảnh (jpg, png, gif, webp)');
+                return;
+            }
+
+            if (file.size > 5 * 1024 * 1024) {
+                alert('Kích thước file tối đa 5MB');
+                return;
+            }
+
+            // Show upload progress
+            const progressContainer = document.getElementById('modalUploadProgress');
+            const progressBar = document.getElementById('modalUploadProgressBar');
+            progressContainer.classList.add('active');
+            progressBar.style.width = '0%';
+
+            // Create FormData
+            const formData = new FormData();
+            formData.append('avatar', file);
+
+            const user = JSON.parse(localStorage.getItem('user'));
+            const token = localStorage.getItem('token');
+
+            // Upload with progress
+            const xhr = new XMLHttpRequest();
+
+            xhr.upload.addEventListener('progress', (e) => {
+                if (e.lengthComputable) {
+                    const percentComplete = (e.loaded / e.total) * 100;
+                    progressBar.style.width = percentComplete + '%';
                 }
+            });
 
-                if (newPassword !== confirmPassword) {
-                    alert('Mật khẩu mới và xác nhận mật khẩu không khớp!');
-                    return;
+            xhr.addEventListener('load', async () => {
+                progressContainer.classList.remove('active');
+
+                if (xhr.status === 200) {
+                    const result = JSON.parse(xhr.responseText);
+
+                    // Update avatar display in modal
+                    updateModalAvatar(result.data.avatarUrl, user.fullName || user.username);
+
+                    // Update user data in localStorage
+                    user.avatarUrl = result.data.avatarUrl;
+                    localStorage.setItem('user', JSON.stringify(user));
+
+                    // Update avatar in sidebar với gradient đẹp
+                    if (window.chatApp) {
+                        window.chatApp.updateAvatar();
+                    }
+
+                    alert('✅ Upload avatar thành công!');
+                } else {
+                    alert('❌ Upload thất bại');
                 }
+            });
 
-                if (newPassword.length < 6) {
-                    alert('Mật khẩu mới phải có ít nhất 6 ký tự!');
-                    return;
+            xhr.addEventListener('error', () => {
+                progressContainer.classList.remove('active');
+                alert('❌ Upload thất bại');
+            });
+
+            xhr.open('POST', `http://localhost:9000/api/users/${user.id}/upload-avatar`);
+            xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+            xhr.send(formData);
+        }
+
+        function deleteModalAvatar() {
+            if (!confirm('Bạn có chắc muốn xóa avatar?')) return;
+
+            const user = JSON.parse(localStorage.getItem('user'));
+            const token = localStorage.getItem('token');
+
+            fetch(`http://localhost:9000/api/users/${user.id}/avatar`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
                 }
-
-                // Lấy token từ localStorage
-                const token = localStorage.getItem('token');
-                if (!token) {
-                    alert('Không tìm thấy token. Vui lòng đăng nhập lại!');
-                    return;
-                }
-
-                // Gọi API đổi mật khẩu
-                const response = await fetch('http://localhost:9000/api/auth/change-password', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + token
-                    },
-                    body: JSON.stringify({
-                        currentPassword: currentPassword,
-                        newPassword: newPassword,
-                        confirmPassword: confirmPassword
-                    })
-                });
-
-                const result = await response.json();
-
+            })
+            .then(response => response.json())
+            .then(result => {
                 if (result.success) {
+                    // Update display
+                    updateModalAvatar(null, user.fullName || user.username);
+
+                    // Update user data
+                    user.avatarUrl = null;
+                    localStorage.setItem('user', JSON.stringify(user));
+
+                    // Update avatar in sidebar với gradient đẹp
+                    if (window.chatApp) {
+                        window.chatApp.updateAvatar();
+                    }
+
+                    alert('✅ Đã xóa avatar');
+                } else {
+                    alert('❌ Xóa avatar thất bại');
+                }
+            })
+            .catch(error => {
+                console.error('Delete avatar error:', error);
+                alert('❌ Xóa avatar thất bại');
+            });
+        }
+
+        function updateProfileModal() {
+            const user = JSON.parse(localStorage.getItem('user'));
+            const token = localStorage.getItem('token');
+            
+            const fullName = document.getElementById('profileFullName').value.trim();
+
+            fetch(`http://localhost:9000/api/users/${user.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    fullName: fullName,
+                    avatarUrl: user.avatarUrl
+                })
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    // Update localStorage
+                    user.fullName = fullName;
+                    localStorage.setItem('user', JSON.stringify(user));
+
+                    // Update sidebar display
+                    if (window.chatApp) {
+                        document.getElementById('userName').textContent = user.fullName || user.username;
+                    }
+
+                    alert('✅ Cập nhật thành công!');
+                    closeProfileModal();
+                } else {
+                    alert('❌ Cập nhật thất bại');
+                }
+            })
+            .catch(error => {
+                console.error('Update profile error:', error);
+                alert('❌ Cập nhật thất bại');
+            });
+        }
+
+        function changePasswordModal() {
+            const user = JSON.parse(localStorage.getItem('user'));
+            const token = localStorage.getItem('token');
+            
+            const currentPassword = document.getElementById('userCurrentPassword').value;
+            const newPassword = document.getElementById('userNewPassword').value;
+            const confirmPassword = document.getElementById('userConfirmPassword').value;
+
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                alert('Vui lòng điền đầy đủ thông tin!');
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                alert('Mật khẩu xác nhận không khớp!');
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                alert('Mật khẩu mới phải có ít nhất 6 ký tự!');
+                return;
+            }
+
+            fetch(`http://localhost:9000/api/users/${user.id}/change-password`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    currentPassword: currentPassword,
+                    newPassword: newPassword
+                })
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    alert('✅ Đổi mật khẩu thành công!');
                     // Clear password fields
                     document.getElementById('userCurrentPassword').value = '';
                     document.getElementById('userNewPassword').value = '';
                     document.getElementById('userConfirmPassword').value = '';
-
-                    alert('Đổi mật khẩu thành công!');
                 } else {
-                    alert('Lỗi: ' + result.message);
+                    alert('❌ Đổi mật khẩu thất bại: ' + result.message);
                 }
-            } catch (error) {
-                console.error('Error changing password:', error);
-                alert('Lỗi khi đổi mật khẩu. Vui lòng thử lại!');
-            }
+            })
+            .catch(error => {
+                console.error('Change password error:', error);
+                alert('❌ Đổi mật khẩu thất bại');
+            });
         }
 
-        // Setup modal functionality
-        document.addEventListener('DOMContentLoaded', () => {
+        // Bind modal events when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Avatar upload
+            document.getElementById('modalAvatarInput').addEventListener('change', (e) => {
+                handleModalAvatarUpload(e.target.files[0]);
+            });
 
-            // Setup modal click outside to close
-            const profileModal = document.getElementById('profileModal');
-            if (profileModal) {
-                profileModal.addEventListener('click', (e) => {
-                    if (e.target === profileModal) {
-                        closeUserProfile();
-                    }
-                });
-            }
+            // Delete avatar button
+            document.getElementById('modalDeleteAvatarBtn').addEventListener('click', () => {
+                deleteModalAvatar();
+            });
+
+            // Profile form submit
+            document.getElementById('profileFormModal').addEventListener('submit', (e) => {
+                e.preventDefault();
+                updateProfileModal();
+            });
+
+            // Close modal when clicking outside
+            document.getElementById('profileModal').addEventListener('click', (e) => {
+                if (e.target.id === 'profileModal') {
+                    closeProfileModal();
+                }
+            });
         });
     </script>
     <script src="chat.js"></script>

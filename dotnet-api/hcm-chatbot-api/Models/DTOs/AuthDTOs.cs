@@ -79,3 +79,22 @@ public class ChangePasswordRequest
     [Compare("NewPassword", ErrorMessage = "Mật khẩu xác nhận không khớp")]
     public string ConfirmPassword { get; set; } = string.Empty;
 }
+
+/// <summary>
+/// DTO để cập nhật thông tin user
+/// </summary>
+public class UpdateUserRequest
+{
+    public string? FullName { get; set; }
+    public string? AvatarUrl { get; set; }
+    public string? Role { get; set; }  // Chỉ admin mới được update
+    public string? Status { get; set; } // Chỉ admin mới được update
+}
+
+/// <summary>
+/// DTO response sau khi upload avatar
+/// </summary>
+public class UploadAvatarResponse
+{
+    public string AvatarUrl { get; set; } = string.Empty;
+}

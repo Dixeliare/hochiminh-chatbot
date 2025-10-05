@@ -71,9 +71,88 @@ class HCMChatApp {
         document.getElementById('userName').textContent = this.user.fullName || this.user.username;
         document.getElementById('userRole').textContent = this.user.role || 'user';
 
+        // Hiển thị avatar
+        this.updateAvatar();
+
         // Auto-resize textarea khi người dùng gõ
         const messageInput = document.getElementById('messageInput');
         messageInput.addEventListener('input', this.autoResizeTextarea);
+    }
+
+    /**
+     * CẬP NHẬT AVATAR
+     * Hiển thị avatar user hoặc chữ cái đầu
+     * Hỗ trợ cả Cloudinary URL và local URL
+     */
+    updateAvatar() {
+        const avatarEl = document.getElementById('userAvatar');
+        const user = this.user;
+
+        if (user && user.avatarUrl && user.avatarUrl.trim() !== '') {
+            // Check if Cloudinary URL or local URL
+            let imageUrl = user.avatarUrl;
+            if (!user.avatarUrl.startsWith('http')) {
+                // Local URL - prepend API base
+                imageUrl = `${this.API_BASE.replace('/api', '')}${user.avatarUrl}`;
+            }
+            // Cloudinary URL - use directly
+
+            // Hiển thị avatar image với error handling
+            const img = document.createElement('img');
+            img.src = imageUrl;
+            img.alt = 'Avatar';
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.objectFit = 'cover';
+            img.style.borderRadius = '50%';
+            
+            img.onerror = () => {
+                // Nếu không load được avatar, hiển thị chữ cái đầu
+                this.showAvatarFallback(user);
+            };
+            
+            img.onload = () => {
+                avatarEl.innerHTML = '';
+                avatarEl.appendChild(img);
+            };
+        } else {
+            // Hiển thị chữ cái đầu
+            this.showAvatarFallback(user);
+        }
+    }
+
+    /**
+     * Hiển thị chữ cái đầu khi không có avatar
+     */
+    showAvatarFallback(user) {
+        const avatarEl = document.getElementById('userAvatar');
+        if (!user) return;
+
+        // Lấy chữ cái đầu từ fullName hoặc username
+        const displayName = user.fullName || user.username || 'User';
+        const initial = displayName.charAt(0).toUpperCase();
+        
+        // Tạo gradient background dựa trên chữ cái
+        const colors = [
+            'linear-gradient(135deg, #667eea, #764ba2)',  // A-B
+            'linear-gradient(135deg, #f093fb, #f5576c)',  // C-D
+            'linear-gradient(135deg, #4facfe, #00f2fe)',  // E-F
+            'linear-gradient(135deg, #43e97b, #38f9d7)',  // G-H
+            'linear-gradient(135deg, #fa709a, #fee140)',  // I-J
+            'linear-gradient(135deg, #a8edea, #fed6e3)',  // K-L
+            'linear-gradient(135deg, #ff9a9e, #fecfef)',  // M-N
+            'linear-gradient(135deg, #ffc3a0, #ffafbd)',  // O-P
+            'linear-gradient(135deg, #d299c2, #fef9d7)', // Q-R
+            'linear-gradient(135deg, #89f7fe, #66a6ff)',  // S-T
+            'linear-gradient(135deg, #fdbb2d, #22c1c3)',  // U-V
+            'linear-gradient(135deg, #fad0c4, #ffd1ff)',  // W-X
+            'linear-gradient(135deg, #ff8a80, #ea384d)',  // Y-Z
+        ];
+        
+        const colorIndex = (initial.charCodeAt(0) - 65) % colors.length;
+        const gradient = colors[colorIndex];
+        
+        avatarEl.innerHTML = `<div style="width: 100%; height: 100%; border-radius: 50%; background: ${gradient}; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.2rem;">${initial}</div>`;
     }
 
     /**

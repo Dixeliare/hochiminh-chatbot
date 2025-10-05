@@ -106,6 +106,7 @@ builder.Services.AddScoped<IUserService, UserService>(); // Quản lý người 
 builder.Services.AddScoped<IConversationService, ConversationService>(); // Quản lý cuộc trò chuyện
 builder.Services.AddScoped<IMessageService, MessageService>(); // Quản lý tin nhắn
 builder.Services.AddScoped<IDashboardService, DashboardService>(); // Thống kê dashboard
+builder.Services.AddScoped<ICloudinaryService, CloudinaryService>(); // Upload ảnh lên Cloudinary
 
 // ===== CẤU HÌNH HTTP CLIENT CHO AI SERVICE =====
 // HttpClient để gọi Python AI backend với timeout 2 phút
@@ -135,6 +136,9 @@ if (app.Environment.IsDevelopment())
 
 // Áp dụng CORS policy (phải đặt trước Authentication)
 app.UseCors("AllowSpecificOrigins");
+
+// Serve static files (cho uploads/avatars)
+app.UseStaticFiles();
 
 // Middleware xác thực và ủy quyền (thứ tự quan trọng)
 app.UseAuthentication(); // Xác thực người dùng (đọc JWT token)
@@ -188,7 +192,7 @@ using (var scope = app.Services.CreateScope())
 }
 
 // ===== KHỞI CHẠY ỨNG DỤNG =====
-app.Run();
+app.Run("http://localhost:9000");
 
 
 
