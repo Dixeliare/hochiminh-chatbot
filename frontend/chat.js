@@ -328,13 +328,84 @@ class HCMChatApp {
     }
 
     /**
+     * KIỂM TRA XEM TIN NHẮN CÓ YÊU CẦU TÌM ẢNH KHÔNG
+     */
+    isImageSearchRequest(message) {
+        const imageKeywords = [
+            'ảnh', 'hình', 'hình ảnh', 'photo', 'picture', 'image',
+            'cho tôi ảnh', 'tìm ảnh', 'xem ảnh', 'show me', 'find image'
+        ];
+        const lowerMessage = message.toLowerCase();
+        return imageKeywords.some(keyword => lowerMessage.includes(keyword));
+    }
+
+    /**
+     * TÌM KIẾM ẢNH TRÊN GOOGLE
+     */
+    async searchImages(query) {
+        try {
+            const response = await this.fetchWithAuth('/chat/search-image', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    query: query,
+                    numResults: 6
+                })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                return data.data; // ImageSearchResponse
+            } else {
+                console.error('Image search failed');
+                return null;
+            }
+        } catch (error) {
+            console.error('Image search error:', error);
+            return null;
+        }
+    }
+
+    /**
+     * TẠO HTML HIỂN THỊ GALLERY ẢNH
+     */
+    createImageGalleryHTML(images, query) {
+        if (!images || images.length === 0) {
+            return `<p>Không tìm thấy ảnh cho từ khóa: "${query}"</p>`;
+        }
+
+        const imagesHTML = images.map(img => `
+            <div class="image-item">
+                <a href="${img.url}" target="_blank" rel="noopener noreferrer">
+                    <img src="${img.thumbnail || img.url}" alt="${img.title}" loading="lazy" />
+                    <div class="image-caption">
+                        <div class="image-title">${img.title || 'Không có tiêu đề'}</div>
+                        <div class="image-source">Nguồn: ${img.source || 'N/A'}</div>
+                    </div>
+                </a>
+            </div>
+        `).join('');
+
+        return `
+            <div class="image-search-result">
+                <p class="search-info">Tìm thấy ${images.length} ảnh cho: <strong>"${query}"</strong></p>
+                <div class="image-gallery">
+                    ${imagesHTML}
+                </div>
+            </div>
+        `;
+    }
+
+    /**
      * GỬI TIN NHẮN - Function chính xử lý chat
      *
      * Quy trình:
      * 1. Validate input và update UI
-     * 2. Gửi request đến .NET API
-     * 3. API gọi Python AI và trả về response
-     * 4. Hiển thị phản hồi AI trên giao diện
+     * 2. Kiểm tra xem có phải yêu cầu tìm ảnh không
+     * 3. Gửi request đến .NET API (chat hoặc image search)
+     * 4. Hiển thị phản hồi AI hoặc gallery ảnh trên giao diện
      */
     async sendMessage() {
         const input = document.getElementById('messageInput');
@@ -357,6 +428,36 @@ class HCMChatApp {
                 role: 'user',
                 createdAt: new Date().toISOString()
             });
+
+            // ===== BƯỚC 2.5: KIỂM TRA XEM CÓ PHẢI YÊU CẦU TÌM ẢNH KHÔNG =====
+            if (this.isImageSearchRequest(message)) {
+                // Tìm kiếm ảnh
+                const imageResult = await this.searchImages(message);
+
+                if (imageResult && imageResult.images && imageResult.images.length > 0) {
+                    // Hiển thị gallery ảnh
+                    const galleryHTML = this.createImageGalleryHTML(imageResult.images, imageResult.query);
+                    this.addMessageToUI({
+                        content: galleryHTML,
+                        role: 'assistant',
+                        createdAt: new Date().toISOString(),
+                        isImageGallery: true
+                    });
+                } else {
+                    // Không tìm thấy ảnh
+                    this.addMessageToUI({
+                        content: `Xin lỗi, tôi không tìm thấy ảnh nào cho yêu cầu: "${message}". Vui lòng thử lại với từ khóa khác.`,
+                        role: 'assistant',
+                        createdAt: new Date().toISOString()
+                    });
+                }
+
+                // Kết thúc và không gọi chat API
+                this.setInputDisabled(false);
+                this.hideTypingIndicator();
+                document.getElementById('messageInput').focus();
+                return;
+            }
 
             // ===== BƯỚC 3: GỬI REQUEST ĐẾN .NET API =====
             // Tạo AbortController để timeout sau 60 giây

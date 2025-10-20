@@ -916,6 +916,120 @@
         .chat-messages::-webkit-scrollbar-thumb:hover {
             background: #a1a1a1;
         }
+
+        /* Image Gallery Styles - Clean & Simple */
+        .image-search-result {
+            margin-top: 16px;
+        }
+
+        .search-info {
+            display: inline-block;
+            color: #374151;
+            font-size: 0.875rem;
+            margin-bottom: 16px;
+            padding: 8px 14px;
+            background: #fef2f2;
+            border-radius: 6px;
+            border-left: 3px solid #dc2626;
+            font-weight: 500;
+        }
+
+        .search-info strong {
+            color: #dc2626;
+            font-weight: 600;
+        }
+
+        .image-gallery {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .image-item {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #fff;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            cursor: pointer;
+        }
+
+        .image-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .image-item a {
+            text-decoration: none;
+            display: block;
+        }
+
+        .image-item img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .image-caption {
+            padding: 10px;
+            background: #fff;
+        }
+
+        .image-title {
+            font-size: 0.8125rem;
+            color: #111827;
+            font-weight: 500;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.4;
+            margin-bottom: 4px;
+        }
+
+        .image-source {
+            font-size: 0.6875rem;
+            color: #9ca3af;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .image-gallery {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            .image-item img {
+                height: 140px;
+            }
+
+            .image-caption {
+                padding: 8px;
+            }
+
+            .image-title {
+                font-size: 0.75rem;
+            }
+
+            .image-source {
+                font-size: 0.625rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .image-gallery {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+
+            .image-item img {
+                height: 120px;
+            }
+        }
     </style>
 </head>
 <body>

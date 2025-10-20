@@ -85,11 +85,23 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowSpecificOrigins", policy =>
     {
         // Lấy danh sách các domain được phép từ appsettings.json
-        var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? Array.Empty<string>();
-        policy.WithOrigins(allowedOrigins) // Chỉ cho phép các origin này
-              .AllowAnyMethod() // Cho phép tất cả HTTP methods (GET, POST, PUT, DELETE...)
-              .AllowAnyHeader() // Cho phép tất cả headers
-              .AllowCredentials(); // Cho phép gửi cookies và credentials
+        var allowedOrigins = builder.Configuration.GetSection("Cors:Cors:AllowedOrigins").Get<string[]>() ??
+                             builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? Array.Empty<string>();
+
+        // Trong môi trường Development, cho phép mọi origin để hỗ trợ mobile/LAN
+        if (builder.Environment.IsDevelopment())
+        {
+            policy.AllowAnyOrigin()
+                  .AllowAnyMethod()
+                  .AllowAnyHeader();
+        }
+        else
+        {
+            policy.WithOrigins(allowedOrigins)
+                  .AllowAnyMethod()
+                  .AllowAnyHeader()
+                  .AllowCredentials();
+        }
     });
 });
 
@@ -192,9 +204,10 @@ using (var scope = app.Services.CreateScope())
 }
 
 // ===== KHỞI CHẠY ỨNG DỤNG =====
-app.Run("http://localhost:9000");
+// app.Run("http://0.0.0.0:9000");
+app.Run();
 
 
-
+//Host=aws-1-ap-southeast-1.pooler.supabase.com;Port=5432;Username=postgres.wapylhetgccoxwtjojtd;Password=nhungoc;Database=postgres;SSL Mode=Require;Trust Server Certificate=True
 
 // "Host=localhost;Port=5432;Database=hcm_chatbot_db;Username=postgres;Password=041203"

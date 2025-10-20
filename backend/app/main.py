@@ -9,6 +9,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from .services.enhanced_rag_service import EnhancedRAGService
+from .services.image_search_service import ImageSearchService
 
 # ===== KHỞI TẠO FASTAPI APPLICATION =====
 app = FastAPI(title="Enhanced HCM Thought Chatbot API", version="2.0.0")
@@ -26,6 +27,8 @@ app.add_middleware(
 # ===== KHỞI TẠO AI SERVICE =====
 # Enhanced RAG service - kết hợp tìm kiếm tri thức và tạo văn bản
 rag_service = EnhancedRAGService()
+# Image search service - tìm kiếm ảnh trên Google
+image_search_service = ImageSearchService()
 
 # ===== DATA MODELS CHO API =====
 
@@ -39,6 +42,17 @@ class EnhancedChatResponse(BaseModel):
     sources: list = []  # Danh sách nguồn tham khảo
     confidence: int = 0  # Độ tin cậy (0-100)
     last_updated: str = None  # Thời gian cập nhật knowledge base
+
+class ImageSearchRequest(BaseModel):
+    """Model cho request tìm kiếm ảnh"""
+    query: str  # Từ khóa tìm kiếm (VD: "Hồ Chí Minh ở Pháp")
+    num_results: int = 5  # Số lượng ảnh (mặc định 5)
+
+class ImageSearchResponse(BaseModel):
+    """Model cho response tìm kiếm ảnh"""
+    images: list = []  # Danh sách ảnh
+    query: str  # Từ khóa đã tìm
+    total: int = 0  # Tổng số ảnh tìm được
 
 # ===== LIFECYCLE EVENTS =====
 
@@ -128,6 +142,43 @@ async def enhanced_chat(request: QuestionRequest):
     except Exception as e:
         print(f"Error in enhanced chat endpoint: {e}")
         raise HTTPException(status_code=500, detail="Lỗi server, vui lòng thử lại")
+
+@app.post("/search-image", response_model=ImageSearchResponse)
+async def search_image(request: ImageSearchRequest):
+    """
+    IMAGE SEARCH ENDPOINT - Tìm kiếm ảnh trên Google Images
+
+    Quy trình:
+    1. Validate input (từ khóa tìm kiếm)
+    2. Gọi Google Custom Search API
+    3. Trả về danh sách ảnh với URL, title, thumbnail
+
+    Args:
+        request: ImageSearchRequest với query và num_results
+
+    Returns:
+        ImageSearchResponse với danh sách ảnh
+    """
+    try:
+        # ===== VALIDATION =====
+        if not request.query.strip():
+            raise HTTPException(status_code=400, detail="Từ khóa tìm kiếm không được để trống")
+
+        # Giới hạn số lượng ảnh
+        num_results = min(request.num_results, 10)
+
+        # ===== TÌM KIẾM ẢNH =====
+        images = image_search_service.search_images(request.query, num_results)
+
+        return ImageSearchResponse(
+            images=images,
+            query=request.query,
+            total=len(images)
+        )
+
+    except Exception as e:
+        print(f"Error in image search endpoint: {e}")
+        raise HTTPException(status_code=500, detail="Lỗi khi tìm kiếm ảnh, vui lòng thử lại")
 
 # ===== SERVER ENTRY POINT =====
 if __name__ == "__main__":

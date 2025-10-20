@@ -236,6 +236,47 @@ public class ChatController : BaseController
             return ErrorResponse($"Failed to delete conversation: {ex.Message}", 500);
         }
     }
+
+    /// <summary>
+    /// API tìm kiếm ảnh trên Google Images
+    /// Sử dụng khi người dùng yêu cầu tìm ảnh (VD: "cho tôi ảnh Bác Hồ ở Pháp")
+    /// </summary>
+    [HttpPost("search-image")]
+    public async Task<IActionResult> SearchImage([FromBody] ImageSearchRequest request)
+    {
+        try
+        {
+            // ===== VALIDATION =====
+            if (string.IsNullOrWhiteSpace(request.Query))
+                return ErrorResponse("Search query cannot be empty", 400);
+
+            // ===== GỌI PYTHON IMAGE SEARCH SERVICE =====
+            var httpClient = _httpClientFactory.CreateClient("AiService");
+            var aiApiUrl = _configuration["AiService:BaseUrl"] ?? "http://localhost:8000";
+
+            // Tạo request cho AI service
+            var imageSearchRequest = new
+            {
+                query = request.Query,
+                num_results = request.NumResults ?? 5
+            };
+
+            // Gọi Python backend để tìm kiếm ảnh
+            var aiResponse = await httpClient.PostAsJsonAsync($"{aiApiUrl}/search-image", imageSearchRequest);
+
+            if (!aiResponse.IsSuccessStatusCode)
+                return ErrorResponse("Image search service unavailable", 503);
+
+            // Parse response từ Python backend
+            var result = await aiResponse.Content.ReadFromJsonAsync<ImageSearchResponse>();
+
+            return SuccessResponse(result, "Images retrieved successfully");
+        }
+        catch (Exception ex)
+        {
+            return ErrorResponse($"Failed to search images: {ex.Message}", 500);
+        }
+    }
 }
 
 // ===== DATA TRANSFER OBJECTS (DTOs) CHO CHAT =====
@@ -282,4 +323,35 @@ public class SourceDto
     public string Type { get; set; } = string.Empty; // Loại nguồn (official, academic, etc.)
     public string Url { get; set; } = string.Empty; // URL nguồn (nếu có)
     public string Document { get; set; } = string.Empty; // Tên tài liệu cụ thể
+}
+
+/// <summary>
+/// DTO để nhận request tìm kiếm ảnh từ frontend
+/// </summary>
+public class ImageSearchRequest
+{
+    public string Query { get; set; } = string.Empty; // Từ khóa tìm kiếm
+    public int? NumResults { get; set; } = 5; // Số lượng ảnh (mặc định 5)
+}
+
+/// <summary>
+/// DTO để trả về kết quả tìm kiếm ảnh
+/// </summary>
+public class ImageSearchResponse
+{
+    public List<ImageDto> Images { get; set; } = new();
+    public string Query { get; set; } = string.Empty;
+    public int Total { get; set; }
+}
+
+/// <summary>
+/// DTO cho từng ảnh trong kết quả tìm kiếm
+/// </summary>
+public class ImageDto
+{
+    public string Url { get; set; } = string.Empty; // URL ảnh gốc
+    public string Title { get; set; } = string.Empty; // Tiêu đề ảnh
+    public string Thumbnail { get; set; } = string.Empty; // URL thumbnail
+    public string Source { get; set; } = string.Empty; // Nguồn website
+    public string Context { get; set; } = string.Empty; // Mô tả ngắn
 }
